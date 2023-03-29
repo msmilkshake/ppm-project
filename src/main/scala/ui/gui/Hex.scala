@@ -1,5 +1,5 @@
 package ui.gui
 
-object Hex {
+object Hex extends App {
 
 }

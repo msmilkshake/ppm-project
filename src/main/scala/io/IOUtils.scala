@@ -5,6 +5,7 @@ import logic.Cells.{Blue, Board, Cell, Red}
 import scala.annotation.tailrec
 
 object IOUtils {
+  
   val blueColor = "\u001b[0;34m"
   val redColor = "\u001b[0;31m"
   val resetColor = "\u001b[0m"
@@ -32,9 +33,6 @@ object IOUtils {
     printBoardGrid(board, board.length, labels)
     printBoardFooter(board.length)
   }
-  def printNum(n: Int): Unit = {
-    print(n)
-  }
   
   def printBoardHeader(labels: List[Int]): Unit = {
     val labelOffset = "     "
@@ -57,22 +55,14 @@ object IOUtils {
       }
     }
     
-    @tailrec
-    def buildLine(n: Int, pattern: String, s: String): String = {
-      n match {
-        case 0 => s
-        case _ => buildLine(n - 1, pattern, f"${s}${pattern}")
-      }
-    }
-    
     println(buildLabels(labels, labelOffset))
-    println(buildLine(labels.length - 1, starPattern, starOffset))
-    println(buildLine(labels.length, hexPattern, hexOffset))
-    
+    println(f"${starOffset}${starPattern * (labels.length - 1)}")
+    println(f"${hexOffset}${hexPattern * labels.length}")
   }
 
   @tailrec
   def printBoardGrid(board: Board, len: Int, labels: List[Int]): Unit = {
+    
     val offset = "  "
     
     def buildgridLine(row: List[Cell], s: String): String = {
@@ -110,8 +100,8 @@ object IOUtils {
           case _ => ""
         }
         println(buildgridLine(x, f"${padding}${offset * (n-1)}${n}  ${redString("*")}  |"))
-        
       }
+      
       case (x :: xs, n :: ns) => {
         val padding = n / 10 match {
           case 0 => " "

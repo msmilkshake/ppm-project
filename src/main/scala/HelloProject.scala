@@ -1,7 +1,12 @@
+
 object HelloProject {
+
   def main(args: Array[String]): Unit = {
-    println("Hello project")
-    //checking branch
+
+    val r = MyRandom(10)
+    println(r.nextInteger)
+    println(r.nextInteger)
+    println(r.nextInteger)
   }
 
 }

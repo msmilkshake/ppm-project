@@ -4,7 +4,7 @@ object Hex extends App {
     val r = new MyRandom(73)
 
   def randomMove(rand: MyRandom): ((Int, Int), MyRandom) = {
-    ((rand.nextInt(5), rand.nextInt(5)), rand)
+    ((rand.nextInt(5), rand.nextInt(5)), rand) // coordinates from 0 to 4
   }
 
   //  val s = GameState(0)

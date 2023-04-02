@@ -1,10 +1,13 @@
 import scala.annotation.tailrec
 
 object Hex extends App {
-    val r = new MyRandom(73)
+   // type Board = List[List[Cells.Cell]]
+    val r = new MyRandom(73) // seed
+    val row = 5 // row coordinate
+    val col = 5 // column coordinate
 
-  def randomMove(rand: MyRandom): ((Int, Int), MyRandom) = {
-    ((rand.nextInt(5), rand.nextInt(5)), rand) // coordinates from 0 to 4
+  def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {
+    ((rand.nextInt(row), rand.nextInt(col)), rand)
   }
 
   //  val s = GameState(0)
@@ -13,7 +16,8 @@ object Hex extends App {
   //  def mainLoop(gameState: GameState, random: MyRandom): Unit = {
   // a) prompt the user for input
   GameUtils.showPrompt()
-  println(randomMove(r))
+  println()
+  println(randomMove(new Board(3, 5), r))
   // b) get the user's input
   // c) make the move
   // d) check for win condition

@@ -1,6 +1,7 @@
 package logic
 
-import logic.Cells.Board
+
+import logic.Cells.{Board, Cell}
 
 import scala.annotation.tailrec
 
@@ -19,5 +20,10 @@ object GameLogic {
       case logic.Cells.Empty => ((row, col), newRand2.asInstanceOf[MyRandom])
       case _ => randomMove(board, newRand2.asInstanceOf[MyRandom])
     }
+  }
+
+  def play(board: Board, player: Cell, row: Int, col: Int): Board = {
+    
+    ???
   }
 }

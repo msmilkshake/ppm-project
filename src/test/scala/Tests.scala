@@ -1,5 +1,5 @@
-import io.IOUtils
-import io.IOUtils.{printBoard, redString}
+import io.BoardPrinter
+import io.BoardPrinter.{printBoard, redString}
 import logic.Cells._
 
 object Tests {

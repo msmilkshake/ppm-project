@@ -4,7 +4,7 @@ import logic.Cells.{Blue, Board, Cell, Red}
 
 import scala.annotation.tailrec
 
-object IOUtils {
+object BoardPrinter {
   
   val blueColor = "\u001b[0;34m"
   val redColor = "\u001b[0;31m"

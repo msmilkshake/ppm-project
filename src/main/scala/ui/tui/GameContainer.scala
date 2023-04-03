@@ -40,7 +40,7 @@ object GameContainer {
 
   @tailrec
   def navToSetWhoPlaysFirst()(c: GameContainer): GameContainer = {
-    optionPrompt(labels._1, Menu.setWhoPlaysFirst) match {
+    optionPrompt(labels._2, Menu.setWhoPlaysFirst) match {
       case None =>
         warningInvalidOption()
         navToSetWhoPlaysFirst()(c)

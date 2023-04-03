@@ -1,7 +1,7 @@
 package logic
 
-object Player extends Enumeration {
+object PlayerType extends Enumeration {
   
-  type Difficulty = Value
+  type Type = Value
   val Human, Easy, Medium = Value
 }

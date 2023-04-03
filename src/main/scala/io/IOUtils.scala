@@ -7,7 +7,7 @@ import scala.annotation.tailrec
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
-object IOUtlis {
+object IOUtils {
 
   def getUserInput(): String = readLine.trim.toUpperCase
 
@@ -42,8 +42,8 @@ object IOUtlis {
   }
   
   def promptBoardLen(): Int = {
-    numberPrompt("Enter the desired board length:") match {
-      case n if n > 4 && n < 100 =>
+    numberPrompt("Enter the desired board length") match {
+      case n if n < 4 || n > 99 =>
         println("The size must be between 4 and 99!\n")
         promptBoardLen()
       case n => n

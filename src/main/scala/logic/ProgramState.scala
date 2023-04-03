@@ -1,7 +1,8 @@
 package logic
 
-object PlayerType extends Enumeration {
+object ProgramState extends Enumeration {
   
-  type Type = Value
-  val Human, Easy, Medium = Value
+  type ProgramState = Value
+  val MainMenu, Settings, GameRunning, Exit = Value
+  
 }

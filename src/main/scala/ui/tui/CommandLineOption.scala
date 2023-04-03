@@ -1,3 +1,5 @@
 package ui.tui
 
-case class CommandLineOption(name: String, exec: Action => Action)
+import logic.GameState
+
+case class CommandLineOption(name: String, exec: GameContainer => GameContainer)

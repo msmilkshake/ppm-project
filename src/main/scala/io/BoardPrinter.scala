@@ -1,22 +1,11 @@
 package io
 
+import io.StringUtils._
 import logic.Cells.{Blue, Board, Cell, Red}
 
 import scala.annotation.tailrec
 
 object BoardPrinter {
-  
-  val blueColor = "\u001b[0;34m"
-  val redColor = "\u001b[0;31m"
-  val resetColor = "\u001b[0m"
-
-  def blueString(s: String): String = {
-    f"${blueColor}${s}${resetColor}"
-  }
-  
-  def redString(s: String): String = {
-    f"${redColor}${s}${resetColor}"
-  }
   
   def printBoard(board: Board): Unit = {
     

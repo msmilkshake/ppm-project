@@ -11,16 +11,15 @@ object Menu {
   
   
   val mainWithSavedGame = ListMap[Int, CommandLineOption](
-    1 -> CommandLineOption("Continue Last Game", _),
-    2 -> CommandLineOption("Start New Game", _),
-    3 -> CommandLineOption("Game Options", _),
-    0 -> CommandLineOption("Quit", _)
+    1 -> continue,
+    2 -> newGame,
+    3 -> options,
+    0 -> quit
   )
 
   val mainWithoutSavedGame = ListMap[Int, CommandLineOption](
-    1 -> CommandLineOption("Continue Last Game", _),
-    2 -> CommandLineOption("Start New Game", _),
-    3 -> CommandLineOption("Game Options", _),
-    0 -> CommandLineOption("Quit", _)
+    1 -> newGame,
+    2 -> options,
+    0 -> quit
   )
 }

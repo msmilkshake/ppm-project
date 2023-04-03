@@ -1,14 +1,15 @@
 package logic
 
 import logic.Cells.{Board, Cell}
-import logic.PlayerType.Type
+import logic.PlayerType.PlayerType
 
 case class GameState(boardLen: Int,
                      board: Board,
-                     players: (Type, Type),
+                     players: (PlayerType, PlayerType),
                      random: MyRandom,
                      firstPlayer: Int,
-                     running: Boolean) {
+                     saveExists: Boolean,
+                     movesHistory: List[Board]) {
   
 
   def setFirstPlayer(firstPlayer: Int, gameState: GameState) =
@@ -17,7 +18,7 @@ case class GameState(boardLen: Int,
   def changeBoardLen(boardLen: Int, gameState: GameState): GameState =
     GameState.changeBoardLen(boardLen, gameState)
 
-  def changePlayers(players: (Type, Type), gameState: GameState): GameState =
+  def changePlayers(players: (PlayerType, PlayerType), gameState: GameState): GameState =
     GameState.changePlayers(players, gameState)
   
   def playTurn() = {
@@ -26,18 +27,21 @@ case class GameState(boardLen: Int,
 
 }
 
-object GameState extends Enumeration {
+object GameState {
 
   def setFirstPlayer(firstPlayer: Int, gs: GameState) = {
-    GameState(gs.boardLen, gs.board, gs.players, gs.random, firstPlayer, gs.running)
+    GameState(gs.boardLen, gs.board, gs.players, gs.random,
+      firstPlayer, gs.saveExists, gs.movesHistory)
   }
 
   def changeBoardLen(boardLen: Int, gs: GameState): GameState = {
-    GameState(boardLen, gs.board, gs.players, gs.random, gs.firstPlayer, gs.running)
+    GameState(boardLen, gs.board, gs.players, gs.random,
+      gs.firstPlayer, gs.saveExists, gs.movesHistory)
   }
 
-  def changePlayers(players: (Type, Type), gs: GameState): GameState = {
-    GameState(gs.boardLen, gs.board, players, gs.random, gs.firstPlayer, gs.running)
+  def changePlayers(players: (PlayerType, PlayerType), gs: GameState): GameState = {
+    GameState(gs.boardLen, gs.board, players, gs.random,
+      gs.firstPlayer, gs.saveExists, gs.movesHistory)
   }
 
   def play(board: Board, player: Cell, row: Int, col: Int): Board = {

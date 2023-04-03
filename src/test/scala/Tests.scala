@@ -1,5 +1,5 @@
 import io.BoardPrinter
-import io.BoardPrinter.{printBoard, redString}
+import io.BoardPrinter.printBoard
 import logic.Cells._
 
 object Tests {
@@ -83,9 +83,7 @@ object Tests {
   )
   
   def main(args: Array[String]): Unit = {
-    printBoard(b3)
-    println("\n")
-    printBoard(b4)
+    printBoard(b2)
   }
 
 }

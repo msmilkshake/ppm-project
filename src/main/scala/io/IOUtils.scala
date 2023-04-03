@@ -1,6 +1,6 @@
 package io
 
-import com.sun.net.httpserver.Authenticator.Success
+import io.StringUtils.redString
 import ui.tui.CommandLineOption
 
 import scala.annotation.tailrec
@@ -16,6 +16,14 @@ object IOUtlis {
     Try(readLine.trim.toUpperCase.toInt)
   }
 
+  @tailrec
+  def numberPrompt(msg: String): Int = {
+    getUserInputInt(msg) match {
+      case Success(i) => println(); i
+      case Failure(_) => println(redString("Invalid number!\n")); numberPrompt(msg)
+    }
+  }
+
   def prompt(msg: String): String = {
     print(msg + ": ")
     scala.io.StdIn.readLine()
@@ -28,9 +36,23 @@ object IOUtlis {
       ((option: (Int, CommandLineOption)) => println(option._1 + ") " + option._2.name))
 
     getUserInputInt("Select an option") match {
-      case Success(i) => options.get(i)
-      case Failure(_) => println("Invalid number!"); optionPrompt(options)
+      case Success(i) => println(); options.get(i)
+      case Failure(_) => println(redString("Invalid number!\n")); optionPrompt(options)
     }
+  }
+  
+  def promptBoardLen(): Int = {
+    numberPrompt("Enter the desired board length:") match {
+      case n if n > 4 && n < 100 =>
+        println("The size must be between 4 and 99!\n")
+        promptBoardLen()
+      case n => n
+    }
+    
+  }
+
+  def warningInvalidOption(): Unit = {
+    println(redString("Invalid option!\n"))
   }
 
 }

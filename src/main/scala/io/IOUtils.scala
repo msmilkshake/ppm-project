@@ -1,8 +1,8 @@
 package io
 
-import io.StringUtils.{blueString, redString}
+import io.StringUtils.{blueString, boldString, boldText, greenString, redString, resetColor}
+import logic.Cells.Cell
 import logic.{GameState, PlayerType}
-import sun.awt.shell.ShellFolder
 import ui.tui.{CommandLineOption, GameContainer}
 
 import java.io.File
@@ -11,7 +11,13 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
 object IOUtils {
+  def saveState(c: GameContainer) = {
+    
+  }
   
+  
+
+
   val saveFilePath = "states/savefile"
   def displayCurrentSettings(gs: GameState): Unit = {
     val p2 = gs.players._2 match {
@@ -25,7 +31,7 @@ object IOUtils {
       case 2 => "Player 2"
       case _ => "Random"
     }
-    println("-- Current Settings --")
+    println(boldString("-- Current Settings --"))
     println(f"${redString("Board length:")} ${blueString(f"${gs.boardLen}")}")
     println(f"${redString("Player 2 type:")} ${blueString(p2)}")
     println(f"${redString("Who plays first:")} ${blueString(first)}\n")
@@ -35,7 +41,7 @@ object IOUtils {
   def getUserInput(): String = readLine.trim.toUpperCase
 
   def getUserInputInt(msg: String): Try[Int] = {
-    print(msg + ": ")
+    print(f"$msg: ")
     Try(readLine.trim.toUpperCase.toInt)
   }
 
@@ -47,16 +53,33 @@ object IOUtils {
     }
   }
 
+  @tailrec
+  def coordPrompt(msg: String): (Int, Int) = {
+    prompt(msg).split("\\s+") match {
+      case Array("M") => (-1, -1)
+      case Array(row, col) =>
+        Try((row.toInt, col.toInt)) match {
+          case Success((r, c)) => (r, c)
+          case Failure(_) =>
+            println(redString("Invalid coordinates!\n"))
+            coordPrompt(msg)
+        }
+      case _ =>
+        println(redString("Invalid coordinates!\n"))
+        coordPrompt(msg)
+    }
+  }
+
   def prompt(msg: String): String = {
-    print(msg + ": ")
-    scala.io.StdIn.readLine()
+    print(f"$msg: ")
+    readLine.trim.toUpperCase
   }
 
   @tailrec
   def optionPrompt(title: String, options: Map[Int, CommandLineOption]): Option[CommandLineOption] = {
-    println(f"-- ${title} --")
-    options.toList map
-      ((option: (Int, CommandLineOption)) => println(option._1 + ") " + option._2.name))
+    println(greenString(boldString(f"-- $title --")))
+    options.toList map ((option: (Int, CommandLineOption)) =>
+        println(f"${boldString(f"${option._1})")} ${option._2.name}"))
 
     getUserInputInt("Select an option") match {
       case Success(i) => println(); options.get(i)
@@ -66,18 +89,20 @@ object IOUtils {
   
   def promptBoardLen(): Int = {
     numberPrompt("Enter the desired board length") match {
-      case n if n < 4 || n > 99 =>
-        println("The size must be between 4 and 99!\n")
+      case n if n < 3 || n > 99 =>
+        println("The size must be between 3 and 99!\n")
         promptBoardLen()
       case n => n
     }
-    
   }
 
   def warningInvalidOption(): Unit = {
     println(redString("Invalid option!\n"))
   }
-  
+
+  def warningOccupiedCell(): Unit = {
+    println(redString("Cell is already occupied!\n"))
+  }
   def checkSaveExists(): Boolean = {
     val saveFile = new File(saveFilePath)
     saveFile.exists()
@@ -86,7 +111,32 @@ object IOUtils {
   def deleteSaveFile(): Unit = {
     val saveFile = new File(saveFilePath)
     saveFile.exists() match {
-      case true => saveFile.delete()
+      case true => saveFile.delete() match {
+        case true => println("Save file deleted successfully!\n")
+        case false => println("Could not delete the save file.\n")
+      }
+      case false => println("There's no save file to delete.\n")
+    }
+  }
+
+  @tailrec
+  def promptCoords(cell: Cell, len: Int): (Int, Int) = {
+    val player = cell match {
+      case logic.Cells.Red => redString("Player 1")
+      case logic.Cells.Blue => blueString("Player 2")
+    }
+    val coords = 
+      coordPrompt(f"$player Enter Coordinates (row <space> col), or 'M' to go to the Main Menu")
+    coords match {
+      case (-1, -1) => (-1, -1)
+      case (row, col) =>
+        if (row < 1 || row > len || col < 1 || col > len) {
+          println("The coordinates are out of range.\n")
+          promptCoords(cell, len)
+        } else {
+          println()
+          (row, col)
+        }
     }
   }
 

@@ -1,38 +1,29 @@
 package ui.tui
 
-import io.IOUtils.{optionPrompt, warningInvalidOption}
-import io.{BoardPrinter, IOUtils}
+import io.IOUtils
 import logic.PlayerType.PlayerType
-import logic.{Cells, GameState, ProgramState}
 import logic.ProgramState.ProgramState
-import ui.tui.Menu.setPlayer2Type
+import logic.{Cells, GameState, MyRandom, ProgramState}
 
 import scala.annotation.tailrec
 
-case class GameContainer(gs: GameState, ps: ProgramState) {
+case class GameContainer(gs: GameState, h: List[GameState], ps: ProgramState) {
+  def randomizeStartingPlayer(): GameContainer =
+    GameContainer.randomizeStartingPlayer(this)
 }
 
 object GameContainer {
 
   val labels = (
-    "Choose Player Type for Player 2",
-    "Choose Which Player Plays First",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
+    "Choose Player Type for Player 2",    //  1
+    "Choose Which Player Plays First",    //  2
   )
   
   @tailrec
   def navToSetPlayer2Type()(c: GameContainer):GameContainer = {
-    optionPrompt(labels._1, Menu.setPlayer2Type) match {
+    IOUtils.optionPrompt(labels._1, Menu.setPlayer2Type) match {
       case None =>
-        warningInvalidOption()
+        IOUtils.warningInvalidOption()
         navToSetPlayer2Type()(c)
       case Some(option) => option.exec(c)
     }
@@ -40,36 +31,42 @@ object GameContainer {
 
   @tailrec
   def navToSetWhoPlaysFirst()(c: GameContainer): GameContainer = {
-    optionPrompt(labels._2, Menu.setWhoPlaysFirst) match {
+    IOUtils.optionPrompt(labels._2, Menu.setWhoPlaysFirst) match {
       case None =>
-        warningInvalidOption()
+        IOUtils.warningInvalidOption()
         navToSetWhoPlaysFirst()(c)
       case Some(option) => option.exec(c)
     }
   }
 
   def setStartingPlayer(n: Int)(c: GameContainer): GameContainer = {
+    val isRandom = n match {
+      case 0 => true
+      case _ => false
+    }
     GameContainer(
       GameState(c.gs.boardLen,
         c.gs.board,
         c.gs.players,
         c.gs.random,
         n,
-        c.gs.saveExists,
-        c.gs.movesHistory),
+        n,
+        isRandom,
+        c.gs.saveExists),
+      c.h,
       ProgramState.Settings)
   }
 
   def startNewGame()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, ProgramState.GameRunning)
+    GameContainer(c.gs, c.h, ProgramState.StartGame)
   }
 
   def navToSettings()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, ProgramState.Settings)
+    GameContainer(c.gs, c.h, ProgramState.Settings)
   }
 
   def navToMainMenu()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, ProgramState.MainMenu)
+    GameContainer(c.gs, c.h, ProgramState.MainMenu)
   }
 
   def setGameBoardLength()(c: GameContainer): GameContainer = {
@@ -80,8 +77,10 @@ object GameContainer {
         c.gs.players,
         c.gs.random,
         c.gs.firstPlayer,
-        c.gs.saveExists,
-        c.gs.movesHistory),
+        c.gs.turn,
+        c.gs.isRandom,
+        c.gs.saveExists),
+      c.h,
       ProgramState.Settings)
   }
   
@@ -93,8 +92,10 @@ object GameContainer {
         c.gs.players,
         c.gs.random,
         c.gs.firstPlayer,
-        IOUtils.checkSaveExists(),
-        c.gs.movesHistory),
+        c.gs.turn,
+        c.gs.isRandom,
+        IOUtils.checkSaveExists()),
+      c.h,
       ProgramState.Settings)
   }
 
@@ -105,8 +106,10 @@ object GameContainer {
         (c.gs.players._1, t),
         c.gs.random,
         c.gs.firstPlayer,
-        c.gs.saveExists,
-        c.gs.movesHistory),
+        c.gs.turn,
+        c.gs.isRandom,
+        c.gs.saveExists),
+      c.h,
       ProgramState.Settings)
   }
 
@@ -115,7 +118,22 @@ object GameContainer {
   }
 
   def exitProgram()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, ProgramState.Exit)
+    GameContainer(c.gs, c.h, ProgramState.Exit)
+  }
+
+  def randomizeStartingPlayer(c: GameContainer): GameContainer = {
+    val (player, newRand) = c.gs.random.nextInt(2)
+    GameContainer(
+      GameState(c.gs.boardLen,
+        c.gs.board,
+        c.gs.players,
+        newRand.asInstanceOf[MyRandom],
+        player + 1,
+        player + 1,
+        c.gs.isRandom,
+        c.gs.saveExists),
+      c.h,
+      ProgramState.GameRunning)
   }
 
 }

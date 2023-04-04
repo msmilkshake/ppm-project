@@ -30,6 +30,7 @@ object Menu {
   // -- Main Menu entries --
   val mainNewGame = CommandLineOption(labels._1, GameContainer.startNewGame())
   val mainContinue = CommandLineOption(labels._2, GameContainer.navToSettings())
+  val showCurrSettings = CommandLineOption(labels._17, GameContainer.showCurrSettings())
 
   // -- Settings entries --
   val settingsBoardLen = CommandLineOption(labels._5, GameContainer.setGameBoardLength())
@@ -60,7 +61,6 @@ object Menu {
   val navBackSettings = CommandLineOption(labels._13, GameContainer.navToSettings())
   val navQuit = CommandLineOption(labels._4, GameContainer.exitProgram())
 
-  val showCurrSettings = CommandLineOption(labels._17, GameContainer.showCurrSettings())
 
   val mainWithSavedGame: ListMap[Int, CommandLineOption] =
     ListMap[Int, CommandLineOption](

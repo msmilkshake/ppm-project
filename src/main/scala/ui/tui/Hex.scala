@@ -1,14 +1,10 @@
 package ui.tui
 
 import io.{BoardPrinter, IOUtils}
-import io.IOUtils._
 import logic.Cells.initBoard
-import logic.PlayerType._
-import logic.PlayerType.Human
+import logic.PlayerType.{Human, _}
 import logic.ProgramState._
-import logic.{GameState, MyRandom, ProgramState}
-
-import scala.annotation.tailrec
+import logic.{GameLogic, GameState, MyRandom}
 
 object Hex extends App {
   
@@ -20,11 +16,13 @@ object Hex extends App {
   val board = initBoard(boardLen)
   val players = (Human, Easy)
   val firstPlayer = 1
+  val isRandom = false
   
   val saveExists = IOUtils.checkSaveExists()
   
-  val s = GameState(boardLen, board, players, random, firstPlayer, saveExists, Nil)
-  val cont = GameContainer(s, MainMenu)
+  val s = GameState(boardLen, board, players, random, firstPlayer, firstPlayer, isRandom, saveExists)
+  val cont = GameContainer(s, Nil, MainMenu)
+  
   
   // -- Program Entry Point --
   mainLoop(cont)
@@ -37,25 +35,35 @@ object Hex extends App {
           case true => Menu.mainWithSavedGame
           case false => Menu.mainWithoutSavedGame
         }
-        
-        optionPrompt(mainMenuTitle, mainMenu) match {
+
+        IOUtils.optionPrompt(mainMenuTitle, mainMenu) match {
           case None =>
-            warningInvalidOption()
+            IOUtils.warningInvalidOption()
             mainLoop(cont)
           case Some(option) =>
             mainLoop(option.exec(cont))
         }
         
       case Settings =>
-        optionPrompt(settingsMenuTitle, Menu.settingsMenu) match {
+        IOUtils.optionPrompt(settingsMenuTitle, Menu.settingsMenu) match {
           case None =>
-            warningInvalidOption()
+            IOUtils.warningInvalidOption()
             mainLoop(cont)
           case Some(option) =>
             mainLoop(option.exec(cont))
         }
-        
-      case GameRunning => ???
+
+      case StartGame => cont.gs.isRandom match {
+        case true =>
+          mainLoop(cont.randomizeStartingPlayer())
+        case false =>
+          mainLoop(GameContainer(cont.gs, cont.h, GameRunning))
+      }
+      
+      case GameRunning =>
+        mainLoop(GameLogic.playTurn(cont))
+
+      case GameWon =>
       case Exit => 
     }
     

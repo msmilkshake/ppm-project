@@ -83,7 +83,10 @@ object Tests {
   )
   
   def main(args: Array[String]): Unit = {
-    printBoard(b2)
+    "1 3".split("\\s+") match {
+      case Array(row, col) => println(true)
+      case _ => println(false)
+    }
   }
 
 }

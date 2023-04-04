@@ -29,6 +29,10 @@ object BoardDrawer {
           drawCell(cs,f"${cellsString}${cell}")
         }
     }
+
+    def drawPatternBody(len: Int, lineString: String): String = {
+
+    }
     println(drawCell(cellLst,lineString))
 
   }

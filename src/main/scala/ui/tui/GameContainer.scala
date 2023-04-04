@@ -29,16 +29,6 @@ object GameContainer {
     }
   }
 
-  @tailrec
-  def navToSetWhoPlaysFirst()(c: GameContainer): GameContainer = {
-    IOUtils.optionPrompt(labels._2, Menu.setWhoPlaysFirst) match {
-      case None =>
-        IOUtils.warningInvalidOption()
-        navToSetWhoPlaysFirst()(c)
-      case Some(option) => option.exec(c)
-    }
-  }
-
   def setStartingPlayer(n: Int)(c: GameContainer): GameContainer = {
     val isRandom = n match {
       case 0 => true
@@ -58,7 +48,7 @@ object GameContainer {
   }
 
   def startNewGame()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, c.h, ProgramState.StartGame)
+    GameContainer(c.gs, c.h, ProgramState.GameRunning)
   }
 
   def navToSettings()(c: GameContainer): GameContainer = {
@@ -99,7 +89,7 @@ object GameContainer {
       ProgramState.Settings)
   }
 
-  def setPlayer2(t: PlayerType)(c: GameContainer): GameContainer = {
+  def setDifficulty(t: PlayerType)(c: GameContainer): GameContainer = {
     GameContainer(
       GameState(c.gs.boardLen,
         c.gs.board,

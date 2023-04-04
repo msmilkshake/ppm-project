@@ -12,32 +12,15 @@ import scala.annotation.tailrec
 
 object GameLogic {
 
-  def playerMove(player: Cell, gs: GameState, playerType: PlayerType): GameState = {
-      playerType match {
-      case logic.PlayerType.Human => humanMove(player, gs)
-      case logic.PlayerType.Easy => ???
-      case logic.PlayerType.Medium => ???
-    }
-  }
-  
-  def play(board: Board, player: Cell, row: Int, col: Int): Board = {
-    board.zipWithIndex map {
-      case (cells, i) => cells.zipWithIndex map {
-        case (cell, j) => if (i == row && j == col) player else cell
-      }
-    }
-  }
-  
-  @tailrec
-  def humanMove(cell: Cell, gs: GameState): GameState = {
+  def playerMove(gs: GameState): GameState = {
     printBoard(gs.board)
-    val (row, col) = IOUtils.promptCoords(cell, gs.boardLen)
+    val (row, col) = IOUtils.promptCoords(Red, gs.boardLen)
     if (row == -1 && col == -1) {
       gs
     } else {
       gs.board(row - 1)(col - 1) match {
         case Empty =>
-          val newBoard = play(gs.board, cell, row - 1, col - 1)
+          val newBoard = play(gs.board, Red, row - 1, col - 1)
           GameState(
             gs.boardLen,
             newBoard,
@@ -50,38 +33,61 @@ object GameLogic {
           )
         case _ =>
           IOUtils.warningOccupiedCell()
-          humanMove(cell, gs)
+          playerMove(gs)
       }
     }
   }
   
-  def easyMove(cell: Cell, gs: GameState): GameState = {
-    ???
+  def computerMove(gs: GameState, computer: PlayerType): GameState = {
+    computer match {
+      case logic.PlayerType.Easy => easyMove(gs)
+      case logic.PlayerType.Medium => ???
+    }
   }
 
-  def playTurn(c: GameContainer): GameContainer =  {
-    val newState: GameState = c.gs.turn match {
-      case 1 =>
-        playerMove(Red,c.gs, c.gs.players._1)
-      case 2 =>
-        playerMove(Blue, c.gs, c.gs.players._2)
-        
+  def play(board: Board, player: Cell, row: Int, col: Int): Board = {
+    board.zipWithIndex map {
+      case (cells, i) => cells.zipWithIndex map {
+        case (cell, j) => if (i == row && j == col) player else cell
+      }
     }
-    if (newState.turn == c.gs.turn) {
-      IOUtils.saveState(c)
-      GameContainer(c.gs, c.h, MainMenu)
-    }
-    GameContainer(newState, c.gs :: c.h, c.ps)
   }
 
-  @tailrec
-  def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {
-    val (row, newRand1) = rand.nextInt(board.length)
-    val (col, newRand2) = newRand1.nextInt(board.length)
-    board(row)(col) match {
-      case logic.Cells.Empty => ((row, col), newRand2.asInstanceOf[MyRandom])
-      case _ => randomMove(board, newRand2.asInstanceOf[MyRandom])
-    }
+  def easyMove(gs: GameState): GameState = {
+    val ((row, col), newRand) = randomMove(gs.board, gs.random)
+    IOUtils.displayComputerPlay(row + 1, col + 1)
+    GameState(
+      gs.boardLen,
+      play(gs.board, Blue, row, col),
+      gs.players,
+      newRand,
+      gs.firstPlayer,
+      gs.turn,
+      gs.isRandom,
+      gs.saveExists
+    )
+  }
+
+  def playTurn(c: GameContainer): GameContainer = {
+        val gs1 = playerMove(c.gs)
+        val gs2 = computerMove(gs1, c.gs.players._2)
+    GameContainer(gs2, c.gs :: c.h, c.ps)
   }
   
+  def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {
+    val emptyCells = getEmptyCellCoords(board)
+    val (target, newRand) = rand.nextInt(emptyCells.length)
+    (emptyCells(target), newRand.asInstanceOf[MyRandom])
+  }
+
+  def getEmptyCellCoords(board: Board): List[(Int, Int)] = {
+    (board.zipWithIndex foldRight List[(Int, Int)]())((line, acc) => {
+      (line._1.zipWithIndex foldRight acc)((cell, result) => {
+        val coord = (line._2, cell._2)
+        if (cell._1 == Empty) coord :: result
+        else result
+      })
+    })
+  }
+
 }

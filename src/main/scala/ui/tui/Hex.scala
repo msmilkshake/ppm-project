@@ -52,13 +52,6 @@ object Hex extends App {
           case Some(option) =>
             mainLoop(option.exec(cont))
         }
-
-      case StartGame => cont.gs.isRandom match {
-        case true =>
-          mainLoop(cont.randomizeStartingPlayer())
-        case false =>
-          mainLoop(GameContainer(cont.gs, cont.h, GameRunning))
-      }
       
       case GameRunning =>
         mainLoop(GameLogic.playTurn(cont))

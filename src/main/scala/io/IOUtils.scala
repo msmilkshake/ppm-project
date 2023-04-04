@@ -11,30 +11,23 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
 object IOUtils {
+  def displayComputerPlay(row: Int, col: Int): Unit = {
+    println(f"${blueString("Computer")} played at coords: ${greenString(f"${row} $col")}.")
+  }
+
   def saveState(c: GameContainer) = {
     
   }
   
-  
-
-
   val saveFilePath = "states/savefile"
   def displayCurrentSettings(gs: GameState): Unit = {
     val p2 = gs.players._2 match {
-      case PlayerType.Easy => "Easy Computer"
-      case PlayerType.Medium => "Medium Computer"
-      case PlayerType.Human => "Human Player (Shared Keyboard)"
-    }
-    
-    val first = gs.firstPlayer match {
-      case 1 => "Player 1"
-      case 2 => "Player 2"
-      case _ => "Random"
+      case PlayerType.Easy => "Easy"
+      case PlayerType.Medium => "Medium"
     }
     println(boldString("-- Current Settings --"))
     println(f"${redString("Board length:")} ${blueString(f"${gs.boardLen}")}")
-    println(f"${redString("Player 2 type:")} ${blueString(p2)}")
-    println(f"${redString("Who plays first:")} ${blueString(first)}\n")
+    println(f"${redString("Computer difficulty:")} ${blueString(p2)}\n")
   }
 
 

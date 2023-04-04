@@ -21,6 +21,7 @@ object BoardDrawer {
     val endLine = redColor(" *")
 
 
+
     def drawCell(cellLst: List[Cell], cellsString: String):String = cellLst match {
         case Nil => cellsString
         case c::cs => {
@@ -29,24 +30,29 @@ object BoardDrawer {
             case Blue => blueColor("O")
             case _ => "."
           }
-          drawCell(cs,f"${cellsString}${cell} - ")
+          drawCell(cs,f"${cellsString} - ${cell}")
         }
     }
 
-    def drawPatternBody(len: Int, lineString: String): String = {
+    def drawPatternBody(col: Int, lineString: String): String = {
       val iniOffset = " "
       val offset = "  "
       val bar = "\\"
       len match {
         case 0 => f"${iniOffset}${offset}${bar}${lineString}"
-        case _ => drawPatternBody(len -1, f"${lineString} / \\")
+        case _ => drawPatternBody(col - 1, f"${lineString} / \\")
       }
 
     }
 
-    println(f"${iniLine}${drawCell(cellLst,lineString)}${endLine}")
-    println(drawPatternBody(len,lineString))
+    val first: String = cellLst.head match {
+      case Red => redColor("X")
+      case Blue => blueColor("O")
+      case _ => "."
+    }
 
+    println(f"${iniLine}${first}${drawCell(cellLst.tail,lineString)}${endLine}")
+    println(drawPatternBody(len,lineString))
   }
 
 }

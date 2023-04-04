@@ -7,7 +7,7 @@ object Test {
 
   def main(args: Array[String]): Unit = {
     drawBoardHeader(5)
-    drawBoardBody(List(Red,Empty,Blue,Empty,Empty),"")
+    drawBoardBody(4,List(Red,Empty,Blue,Empty,Empty),"")
   }
 
 }

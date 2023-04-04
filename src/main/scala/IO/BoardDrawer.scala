@@ -16,7 +16,10 @@ object BoardDrawer {
     println(f"${IniOffSet}${HeadPattern * (len - 1)}")
   }
 
-  def drawBoardBody(cellLst: List[Cell], lineString: String): Unit = {
+  def drawBoardBody(len: Int, cellLst: List[Cell], lineString: String): Unit = {
+    val iniLine = redColor("* ")
+    val endLine = redColor(" *")
+
 
     def drawCell(cellLst: List[Cell], cellsString: String):String = cellLst match {
         case Nil => cellsString
@@ -26,14 +29,23 @@ object BoardDrawer {
             case Blue => blueColor("O")
             case _ => "."
           }
-          drawCell(cs,f"${cellsString}${cell}")
+          drawCell(cs,f"${cellsString}${cell} - ")
         }
     }
 
     def drawPatternBody(len: Int, lineString: String): String = {
+      val iniOffset = " "
+      val offset = "  "
+      val bar = "\\"
+      len match {
+        case 0 => f"${iniOffset}${offset}${bar}${lineString}"
+        case _ => drawPatternBody(len -1, f"${lineString} / \\")
+      }
 
     }
-    println(drawCell(cellLst,lineString))
+
+    println(f"${iniLine}${drawCell(cellLst,lineString)}${endLine}")
+    println(drawPatternBody(len,lineString))
 
   }
 

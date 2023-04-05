@@ -1,5 +1,7 @@
 package logic
 
-object Board {
+import logic.Cells.Cell
 
+object Board {
+  type Board = List[List[Cell]]
 }

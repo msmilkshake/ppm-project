@@ -1,7 +1,8 @@
 package io
 
 import io.StringUtils._
-import logic.Cells.{Blue, Board, Cell, Red}
+import logic.Board.Board
+import logic.Cells.{Blue, Cell, Red}
 
 import scala.annotation.tailrec
 

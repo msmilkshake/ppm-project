@@ -3,15 +3,28 @@ package logic
 
 import io.BoardPrinter.printBoard
 import io.IOUtils
-import logic.Cells.{Blue, Board, Cell, Empty, Red}
-import logic.PlayerType.PlayerType
-import logic.ProgramState.MainMenu
+import logic.Board.Board
+import logic.Cells.{Blue, Cell, Empty, Red}
+import logic.Difficulty.Difficulty
 import ui.tui.GameContainer
 
 import scala.annotation.tailrec
 
-object GameLogic {
 
+object GameLogic {
+  
+  type Coord = (Int, Int)
+  
+  val adjacency = List(
+    (-1, 0), // top-left
+    (-1, 1), // top-right
+    (0, 1), // right
+    (1, 0), // bottom-right
+    (1, -1), // bottom-left
+    (0, -1), // left
+  )
+
+  @tailrec
   def playerMove(gs: GameState): GameState = {
     printBoard(gs.board)
     val (row, col) = IOUtils.promptCoords(Red, gs.boardLen)
@@ -21,27 +34,21 @@ object GameLogic {
       gs.board(row - 1)(col - 1) match {
         case Empty =>
           val newBoard = play(gs.board, Red, row - 1, col - 1)
-          GameState(
-            gs.boardLen,
+          GameState(gs.boardLen,
             newBoard,
-            gs.players,
-            gs.random,
-            gs.firstPlayer,
-            gs.turn % 2 + 1,
-            gs.isRandom,
-            gs.saveExists
-          )
+            gs.computerDifficulty,
+            gs.random)
         case _ =>
           IOUtils.warningOccupiedCell()
           playerMove(gs)
       }
     }
   }
-  
-  def computerMove(gs: GameState, computer: PlayerType): GameState = {
+
+  def computerMove(gs: GameState, computer: Difficulty): GameState = {
     computer match {
-      case logic.PlayerType.Easy => easyMove(gs)
-      case logic.PlayerType.Medium => ???
+      case logic.Difficulty.Easy => easyMove(gs)
+      case logic.Difficulty.Medium => ???
     }
   }
 
@@ -56,38 +63,114 @@ object GameLogic {
   def easyMove(gs: GameState): GameState = {
     val ((row, col), newRand) = randomMove(gs.board, gs.random)
     IOUtils.displayComputerPlay(row + 1, col + 1)
-    GameState(
-      gs.boardLen,
+    GameState(gs.boardLen,
       play(gs.board, Blue, row, col),
-      gs.players,
-      newRand,
-      gs.firstPlayer,
-      gs.turn,
-      gs.isRandom,
-      gs.saveExists
-    )
+      gs.computerDifficulty,
+      newRand)
   }
 
   def playTurn(c: GameContainer): GameContainer = {
-        val gs1 = playerMove(c.gs)
-        val gs2 = computerMove(gs1, c.gs.players._2)
-    GameContainer(gs2, c.gs :: c.h, c.ps)
+    val gs1 = playerMove(c.gameState)
+    val gs2 = computerMove(gs1, c.gameState.computerDifficulty)
+    GameContainer(gs2, c.gameState :: c.stateHistory, c.programState, c.saveExists)
   }
-  
+
   def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {
-    val emptyCells = getEmptyCellCoords(board)
+    val emptyCells = getAllCells(board, Empty)
     val (target, newRand) = rand.nextInt(emptyCells.length)
     (emptyCells(target), newRand.asInstanceOf[MyRandom])
   }
 
-  def getEmptyCellCoords(board: Board): List[(Int, Int)] = {
+  def getAllCells(board: Board, cell: Cell): List[(Int, Int)] = {
     (board.zipWithIndex foldRight List[(Int, Int)]())((line, acc) => {
-      (line._1.zipWithIndex foldRight acc)((cell, result) => {
-        val coord = (line._2, cell._2)
-        if (cell._1 == Empty) coord :: result
+      (line._1.zipWithIndex foldRight acc)((zip, result) => {
+        if (zip._1 == cell) (line._2, zip._2) :: result
         else result
       })
     })
+  }
+
+  def checkWinner(b: Board, c: Cell): Boolean = {
+
+    @tailrec
+    def buildStartLine(b: Board, c: Cell, i: Int, res: List[Coord]): List[Coord] = {
+      i match {
+        case 0 => res
+        case n =>
+          c match {
+            case Red => buildStartLine(b, c, i - 1, (i - 1, 0) :: res)
+            case Blue => buildStartLine(b, c, i - 1, (0, i - 1) :: res)
+          }
+      }
+    }
+
+    @tailrec
+    def winnerPath(b: Board, c: Cell, path: List[Coord]): Boolean = {
+      path match {
+        case Nil => false
+        case (_, col) :: _ if col == b.length - 1 && c == Red => true
+        case (row, _) :: _ if row == b.length - 1 && c == Blue => true
+        case _ :: tail => winnerPath(b, c, tail)
+      }
+    }
+
+    @tailrec
+    def checkAjacentCells(b: Board, c: Cell, p: Coord, s: Set[Coord],
+                          adj: List[Coord], res: List[Coord]): (List[Coord], Set[Coord]) = {
+      adj match {
+        case Nil => (res, s)
+        case (rowOffset, colOffset) :: tail =>
+          val (row, col) = (p._1 + rowOffset, p._2 + colOffset)
+          if (row < 0 || row >= b.length || col < 0 || col >= b.length) {
+            checkAjacentCells(b, c, p, s, tail, res)
+          } else {
+            b(row)(col) match {
+              case cell if cell == c && !s.contains((row, col)) =>
+                checkAjacentCells(b, cell, p, s + ((row, col)), tail, (row, col) :: res)
+              case _ => checkAjacentCells(b, c, p, s, tail, res)
+            }
+          }
+      }
+    }
+
+    @tailrec
+    def buildAdjacencyList(b: Board, c: Cell, toCheck: List[Coord],
+                           set: Set[Coord]): List[Coord] = {
+      toCheck match {
+        case Nil => set.toList
+        case pos :: posTail if b(pos._1)(pos._2) == c =>
+          val (adj, newSet) = checkAjacentCells(b, c, pos, set + pos, adjacency, Nil)
+          buildAdjacencyList(b, c, posTail ++ adj, newSet)
+        case _ :: posTail => buildAdjacencyList(b, c, posTail, set)
+      }
+    }
+
+    (buildStartLine(b, c, b.length, Nil) foldRight false)(
+      (coord, result) => result ||
+        winnerPath(b, c, buildAdjacencyList(b, c, List(coord), Set())))
+  }
+  
+  def getAdjacents(board: Board, cell: Cell, pos: Coord): List[Coord] = {
+    
+    @tailrec
+    def adjacents(b: Board, c: Cell, p: Coord,
+            adj: List[Coord], res: List[Coord]): List[Coord] = {
+      adj match {
+        case Nil => res
+        case (rowOffset, colOffset) :: tail =>
+          val (row, col) = (pos._1 + rowOffset, pos._2 + colOffset)
+          if (row < 0 || row >= board.length || col < 0 || col >= board.length) {
+            adjacents(b, c, p, tail, res)
+          } else {
+            board(row)(col) match {
+              case s if s == c => adjacents(b, c, p, tail, (row, col) :: res)
+              case _ => adjacents(b, c, p, tail, res)
+            }
+          }
+      }
+    }
+    
+    adjacents(board, cell, pos, adjacency, Nil)
   }
 
 }

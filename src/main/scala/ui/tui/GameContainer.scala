@@ -1,26 +1,27 @@
 package ui.tui
 
 import io.IOUtils
-import logic.PlayerType.PlayerType
+import logic.Difficulty.Difficulty
 import logic.ProgramState.ProgramState
-import logic.{Cells, GameState, MyRandom, ProgramState}
+import logic.{Cells, GameState, ProgramState}
 
 import scala.annotation.tailrec
 
-case class GameContainer(gs: GameState, h: List[GameState], ps: ProgramState) {
-  def randomizeStartingPlayer(): GameContainer =
-    GameContainer.randomizeStartingPlayer(this)
+case class GameContainer(gameState: GameState,
+                         stateHistory: List[GameState],
+                         programState: ProgramState,
+                         saveExists: Boolean) {
 }
 
 object GameContainer {
 
   val labels = (
-    "Choose Player Type for Player 2",    //  1
-    "Choose Which Player Plays First",    //  2
+    "Choose Computer Difficulty", //  1
+    ""
   )
-  
+
   @tailrec
-  def navToSetPlayer2Type()(c: GameContainer):GameContainer = {
+  def navToSetPlayer2Type()(c: GameContainer): GameContainer = {
     IOUtils.optionPrompt(labels._1, Menu.setPlayer2Type) match {
       case None =>
         IOUtils.warningInvalidOption()
@@ -29,34 +30,16 @@ object GameContainer {
     }
   }
 
-  def setStartingPlayer(n: Int)(c: GameContainer): GameContainer = {
-    val isRandom = n match {
-      case 0 => true
-      case _ => false
-    }
-    GameContainer(
-      GameState(c.gs.boardLen,
-        c.gs.board,
-        c.gs.players,
-        c.gs.random,
-        n,
-        n,
-        isRandom,
-        c.gs.saveExists),
-      c.h,
-      ProgramState.Settings)
-  }
-
   def startNewGame()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, c.h, ProgramState.GameRunning)
+    GameContainer(c.gameState, c.stateHistory, ProgramState.GameRunning, c.saveExists)
   }
 
   def navToSettings()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, c.h, ProgramState.Settings)
+    GameContainer(c.gameState, c.stateHistory, ProgramState.Settings, c.saveExists)
   }
 
   def navToMainMenu()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, c.h, ProgramState.MainMenu)
+    GameContainer(c.gameState, c.stateHistory, ProgramState.MainMenu, c.saveExists)
   }
 
   def setGameBoardLength()(c: GameContainer): GameContainer = {
@@ -64,66 +47,43 @@ object GameContainer {
     GameContainer(
       GameState(length,
         Cells.initBoard(length),
-        c.gs.players,
-        c.gs.random,
-        c.gs.firstPlayer,
-        c.gs.turn,
-        c.gs.isRandom,
-        c.gs.saveExists),
-      c.h,
-      ProgramState.Settings)
+        c.gameState.computerDifficulty,
+        c.gameState.random),
+      c.stateHistory,
+      ProgramState.Settings,
+      c.saveExists)
   }
-  
+
   def deleteSavedGame()(c: GameContainer): GameContainer = {
     IOUtils.deleteSaveFile()
     GameContainer(
-      GameState(c.gs.boardLen,
-        c.gs.board,
-        c.gs.players,
-        c.gs.random,
-        c.gs.firstPlayer,
-        c.gs.turn,
-        c.gs.isRandom,
-        IOUtils.checkSaveExists()),
-      c.h,
-      ProgramState.Settings)
+      GameState(c.gameState.boardLen,
+        c.gameState.board,
+        c.gameState.computerDifficulty,
+        c.gameState.random),
+      c.stateHistory,
+      ProgramState.Settings,
+      IOUtils.checkSaveExists())
   }
 
-  def setDifficulty(t: PlayerType)(c: GameContainer): GameContainer = {
+  def setDifficulty(t: Difficulty)(c: GameContainer): GameContainer = {
     GameContainer(
-      GameState(c.gs.boardLen,
-        c.gs.board,
-        (c.gs.players._1, t),
-        c.gs.random,
-        c.gs.firstPlayer,
-        c.gs.turn,
-        c.gs.isRandom,
-        c.gs.saveExists),
-      c.h,
-      ProgramState.Settings)
+      GameState(c.gameState.boardLen,
+        c.gameState.board,
+        c.gameState.computerDifficulty,
+        c.gameState.random),
+      c.stateHistory,
+      ProgramState.Settings,
+      c.saveExists)
   }
 
   def showCurrSettings()(c: GameContainer): GameContainer = {
-    IOUtils.displayCurrentSettings(c.gs); c
+    IOUtils.displayCurrentSettings(c.gameState);
+    c
   }
 
   def exitProgram()(c: GameContainer): GameContainer = {
-    GameContainer(c.gs, c.h, ProgramState.Exit)
-  }
-
-  def randomizeStartingPlayer(c: GameContainer): GameContainer = {
-    val (player, newRand) = c.gs.random.nextInt(2)
-    GameContainer(
-      GameState(c.gs.boardLen,
-        c.gs.board,
-        c.gs.players,
-        newRand.asInstanceOf[MyRandom],
-        player + 1,
-        player + 1,
-        c.gs.isRandom,
-        c.gs.saveExists),
-      c.h,
-      ProgramState.GameRunning)
+    GameContainer(c.gameState, c.stateHistory, ProgramState.Exit, c.saveExists)
   }
 
 }

@@ -1,6 +1,6 @@
 package ui.tui
 
-import logic.{GameState, PlayerType}
+import logic.{GameState, Difficulty}
 
 import scala.collection.immutable.ListMap
 
@@ -34,9 +34,9 @@ object Menu {
 
   // -- Player 2 Setup entries --
   val settingDifficultyEasy =
-    CommandLineOption(labels._8, GameContainer.setDifficulty(PlayerType.Easy))
+    CommandLineOption(labels._8, GameContainer.setDifficulty(Difficulty.Easy))
   val settingDifficultyMedium =
-    CommandLineOption(labels._9, GameContainer.setDifficulty(PlayerType.Medium))
+    CommandLineOption(labels._9, GameContainer.setDifficulty(Difficulty.Medium))
   
   // -- Navigation entries --
   val navMain = CommandLineOption(labels._10, GameContainer.navToMainMenu())

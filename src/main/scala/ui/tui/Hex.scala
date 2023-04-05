@@ -2,7 +2,7 @@ package ui.tui
 
 import io.{BoardPrinter, IOUtils}
 import logic.Cells.initBoard
-import logic.PlayerType.{Human, _}
+import logic.Difficulty._
 import logic.ProgramState._
 import logic.{GameLogic, GameState, MyRandom}
 
@@ -14,24 +14,22 @@ object Hex extends App {
   val random = MyRandom(0x54321)
   val boardLen = 7
   val board = initBoard(boardLen)
-  val players = (Human, Easy)
-  val firstPlayer = 1
-  val isRandom = false
+  val difficulty = Easy
   
   val saveExists = IOUtils.checkSaveExists()
   
-  val s = GameState(boardLen, board, players, random, firstPlayer, firstPlayer, isRandom, saveExists)
-  val cont = GameContainer(s, Nil, MainMenu)
+  val s = GameState(boardLen, board, difficulty, random)
+  val startingContainer = GameContainer(s, Nil, MainMenu, saveExists)
   
   
   // -- Program Entry Point --
-  mainLoop(cont)
+  mainLoop(startingContainer)
   
   
   def mainLoop(cont: GameContainer): Unit = {
-    cont.ps match {
+    cont.programState match {
       case MainMenu =>
-        val mainMenu = cont.gs.saveExists match {
+        val mainMenu = cont.saveExists match {
           case true => Menu.mainWithSavedGame
           case false => Menu.mainWithoutSavedGame
         }
@@ -60,10 +58,6 @@ object Hex extends App {
       case Exit => 
     }
     
-  }
-  
-  def gameLoop(state: GameState): Unit = {
-    BoardPrinter.printBoard(state.board)
   }
   
 }

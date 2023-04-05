@@ -1,16 +1,12 @@
 package logic
 
-import logic.Cells.{Board, Cell}
-import logic.PlayerType.PlayerType
+import logic.Board.Board
+import logic.Difficulty.Difficulty
 
 case class GameState(boardLen: Int,
                      board: Board,
-                     players: (PlayerType, PlayerType),
-                     random: MyRandom,
-                     firstPlayer: Int,
-                     turn: Int,
-                     isRandom: Boolean,
-                     saveExists: Boolean) {
+                     computerDifficulty: Difficulty,
+                     random: MyRandom) {
 }
 
 object GameState {

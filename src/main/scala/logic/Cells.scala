@@ -1,18 +1,17 @@
 package logic
 
-import logic.Cells.Cell
+import logic.Board.Board
 
 import scala.annotation.tailrec
 
 object Cells extends Enumeration {
-
-  type Board = List[List[Cell]]
-  type Cell = Value
   
+  type Cell = Value
+
   val Red, Blue, Empty = Value
 
   def initBoard(len: Int): Board = {
-    
+
     @tailrec
     def initRow(row: List[Cell], i: Int): List[Cell] = {
       i match {
@@ -20,7 +19,7 @@ object Cells extends Enumeration {
         case _ => initRow(Empty :: row, i - 1)
       }
     }
-    
+
     @tailrec
     def initRows(board: Board, i: Int): Board = {
       i match {
@@ -28,6 +27,7 @@ object Cells extends Enumeration {
         case _ => initRows(initRow(Nil, len) :: board, i - 1)
       }
     }
+
     initRows(Nil, len)
   }
 }

@@ -2,7 +2,7 @@ package io
 
 import io.StringUtils.{blueString, boldString, boldText, greenString, redString, resetColor}
 import logic.Cells.Cell
-import logic.{GameState, PlayerType}
+import logic.{GameState, Difficulty}
 import ui.tui.{CommandLineOption, GameContainer}
 
 import java.io.File
@@ -21,9 +21,9 @@ object IOUtils {
   
   val saveFilePath = "states/savefile"
   def displayCurrentSettings(gs: GameState): Unit = {
-    val p2 = gs.players._2 match {
-      case PlayerType.Easy => "Easy"
-      case PlayerType.Medium => "Medium"
+    val p2 = gs.computerDifficulty match {
+      case Difficulty.Easy => "Easy"
+      case Difficulty.Medium => "Medium"
     }
     println(boldString("-- Current Settings --"))
     println(f"${redString("Board length:")} ${blueString(f"${gs.boardLen}")}")

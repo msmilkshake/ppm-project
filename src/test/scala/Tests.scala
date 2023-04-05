@@ -1,6 +1,9 @@
-import io.BoardPrinter
 import io.BoardPrinter.printBoard
+import io.StringUtils.{blueString, redString}
+import logic.Board.Board
 import logic.Cells._
+import logic.LogicTest
+import logic.LogicTest.checkWinner
 
 object Tests {
 
@@ -81,12 +84,44 @@ object Tests {
     List(Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red),
     List(Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red)
   )
+
+  val a1: Board = List(
+    List(Red, Red, Red, Red, Blue),
+    List(Red, Empty, Red, Blue, Empty),
+    List(Empty, Red, Blue, Red, Empty),
+    List(Empty, Red, Blue, Blue, Empty),
+    List(Blue, Red, Red, Red, Red)
+  )
+
+  val a2: Board = List(
+    List(Red, Blue, Red, Blue, Empty),
+    List(Blue, Empty, Blue, Empty, Empty),
+    List(Blue, Red, Blue, Blue, Empty),
+    List(Empty, Red, Empty, Blue, Empty),
+    List(Empty, Red, Red, Blue, Red)
+  )
+
+  val a3: Board = List(
+    List(Red, Red, Red, Red, Blue),
+    List(Red, Empty, Red, Blue, Empty),
+    List(Empty, Red, Blue, Red, Empty),
+    List(Empty, Red, Blue, Blue, Empty),
+    List(Blue, Empty, Red, Red, Red)
+  )
   
   def main(args: Array[String]): Unit = {
-    "1 3".split("\\s+") match {
-      case Array(row, col) => println(true)
-      case _ => println(false)
-    }
+    printBoard(a1)
+    println(f"${redString("Red")} wins? ${checkWinner(a1, Red)}")
+    println(f"${blueString("Blue")} wins? ${checkWinner(a1, Blue)}")
+
+    printBoard(a2)
+    println(f"${redString("Red")} wins? ${checkWinner(a2, Red)}")
+    println(f"${blueString("Blue")} wins? ${checkWinner(a2, Blue)}")
+
+    printBoard(a3)
+    println(f"${redString("Red")} wins? ${checkWinner(a3, Red)}")
+    println(f"${blueString("Blue")} wins? ${checkWinner(a3, Blue)}")
   }
+  
 
 }

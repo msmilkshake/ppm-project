@@ -1,6 +1,6 @@
 package IO
 
-import Core.Cells.{Blue, Board, Cell, Red}
+import Core.Cells.{Blue, Board, Cell, Empty, Red}
 import IO.ColorUtils._
 
 import scala.annotation.tailrec
@@ -8,10 +8,9 @@ import scala.annotation.tailrec
 object BoardDrawer {
 
   def drawBoard(board: Board): Unit = {
-
-
     drawBoardHeader(board.length)
-
+    drawBoardBody(board,board.length-1, List.range(0, board.length))
+    drawBoardFooter(board.length)
   }
 
   def drawBoardHeader(len: Int): Unit = {

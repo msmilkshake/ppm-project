@@ -66,11 +66,11 @@ object GameContainer {
       IOUtils.checkSaveExists())
   }
 
-  def setDifficulty(t: Difficulty)(c: GameContainer): GameContainer = {
+  def setDifficulty(d: Difficulty)(c: GameContainer): GameContainer = {
     GameContainer(
       GameState(c.gameState.boardLen,
         c.gameState.board,
-        c.gameState.computerDifficulty,
+        d,
         c.gameState.random),
       c.stateHistory,
       ProgramState.Settings,

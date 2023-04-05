@@ -119,7 +119,8 @@ object IOUtils {
       case logic.Cells.Blue => blueString("Player 2")
     }
     val coords = 
-      coordPrompt(f"$player Enter Coordinates (row <space> col), or 'M' to go to the Main Menu")
+      coordPrompt(f"$player Enter Coordinates (format: 'row' <space> 'col')\n" +
+        "Or enter'M' to go to the Main Menu or 'U' to Undo the last move")
     coords match {
       case (-1, -1) => (-1, -1)
       case (row, col) =>

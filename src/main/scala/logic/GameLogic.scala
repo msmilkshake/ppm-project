@@ -1,6 +1,5 @@
 package logic
 
-
 import io.BoardPrinter.printBoard
 import io.IOUtils
 import logic.Board.Board
@@ -9,7 +8,6 @@ import logic.Difficulty.Difficulty
 import ui.tui.GameContainer
 
 import scala.annotation.tailrec
-
 
 object GameLogic {
   
@@ -23,25 +21,24 @@ object GameLogic {
     (1, -1), // bottom-left
     (0, -1), // left
   )
-
+  
   @tailrec
   def playerMove(gs: GameState): GameState = {
     printBoard(gs.board)
-    val (row, col) = IOUtils.promptCoords(Red, gs.boardLen)
-    if (row == -1 && col == -1) {
-      gs
-    } else {
-      gs.board(row - 1)(col - 1) match {
-        case Empty =>
-          val newBoard = play(gs.board, Red, row - 1, col - 1)
-          GameState(gs.boardLen,
-            newBoard,
-            gs.computerDifficulty,
-            gs.random)
-        case _ =>
-          IOUtils.warningOccupiedCell()
-          playerMove(gs)
-      }
+    IOUtils.promptCoords(Red, gs.boardLen) match {
+      case (row, col) if row == -1 && col == -1 => gs
+      case (row, col) =>
+        gs.board(row - 1)(col - 1) match {
+          case Empty =>
+            val newBoard = play(gs.board, Red, row - 1, col - 1)
+            GameState(gs.boardLen,
+              newBoard,
+              gs.computerDifficulty,
+              gs.random)
+          case _ =>
+            IOUtils.warningOccupiedCell()
+            playerMove(gs)
+        }
     }
   }
 
@@ -81,8 +78,8 @@ object GameLogic {
     (emptyCells(target), newRand.asInstanceOf[MyRandom])
   }
 
-  def getAllCells(board: Board, cell: Cell): List[(Int, Int)] = {
-    (board.zipWithIndex foldRight List[(Int, Int)]())((line, acc) => {
+  def getAllCells(board: Board, cell: Cell): List[Coord] = {
+    (board.zipWithIndex foldRight List[Coord]())((line, acc) => {
       (line._1.zipWithIndex foldRight acc)((zip, result) => {
         if (zip._1 == cell) (line._2, zip._2) :: result
         else result
@@ -144,7 +141,7 @@ object GameLogic {
         case _ :: posTail => buildAdjacencyList(b, c, posTail, set)
       }
     }
-
+    
     (buildStartLine(b, c, b.length, Nil) foldRight false)(
       (coord, result) => result ||
         winnerPath(b, c, buildAdjacencyList(b, c, List(coord), Set())))

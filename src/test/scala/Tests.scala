@@ -5,7 +5,7 @@ import logic.Cells._
 import logic.GameLogic.hasContiguousLine
 
 object Tests {
-
+  
   val b1: Board = List(
     List(Empty, Empty, Empty, Empty, Empty),
     List(Empty, Empty, Empty, Empty, Empty),
@@ -34,21 +34,21 @@ object Tests {
   )
 
   val b4: Board = List(
-    List(Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,Empty, Red),
-    List(Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,Red, Empty),
-    List(Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red,Empty, Empty),
-    List(Empty, Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty, Red, Empty, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty, Red, Empty, Empty, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty, Blue, Empty, Empty, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Blue, Empty, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Blue, Empty, Empty,Empty, Empty),
-    List(Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty,Empty, Empty),
-    List(Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue,Empty, Empty),
-    List(Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,Blue, Empty),
-    List(Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,Empty, Blue),
+    List(Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red),
+    List(Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty),
+    List(Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty),
+    List(Empty, Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Empty, Empty, Red, Empty, Blue, Empty, Empty, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Blue, Empty, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty, Empty),
+    List(Empty, Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty),
+    List(Empty, Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty, Empty),
+    List(Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty),
+    List(Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue),
   )
 
   val b5: Board = List(
@@ -107,7 +107,7 @@ object Tests {
     List(Empty, Red, Blue, Blue, Empty),
     List(Blue, Empty, Red, Red, Red)
   )
-  
+
   def main(args: Array[String]): Unit = {
     printBoard(a1)
     println(f"${redString("Red")} wins? ${hasContiguousLine(a1, Red)}")
@@ -121,6 +121,6 @@ object Tests {
     println(f"${redString("Red")} wins? ${hasContiguousLine(a3, Red)}")
     println(f"${blueString("Blue")} wins? ${hasContiguousLine(a3, Blue)}")
   }
-  
+
 
 }

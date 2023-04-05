@@ -2,8 +2,7 @@ import io.BoardPrinter.printBoard
 import io.StringUtils.{blueString, redString}
 import logic.Board.Board
 import logic.Cells._
-import logic.LogicTest
-import logic.LogicTest.checkWinner
+import logic.GameLogic.hasContiguousLine
 
 object Tests {
 
@@ -111,16 +110,16 @@ object Tests {
   
   def main(args: Array[String]): Unit = {
     printBoard(a1)
-    println(f"${redString("Red")} wins? ${checkWinner(a1, Red)}")
-    println(f"${blueString("Blue")} wins? ${checkWinner(a1, Blue)}")
+    println(f"${redString("Red")} wins? ${hasContiguousLine(a1, Red)}")
+    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a1, Blue)}")
 
     printBoard(a2)
-    println(f"${redString("Red")} wins? ${checkWinner(a2, Red)}")
-    println(f"${blueString("Blue")} wins? ${checkWinner(a2, Blue)}")
+    println(f"${redString("Red")} wins? ${hasContiguousLine(a2, Red)}")
+    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a2, Blue)}")
 
     printBoard(a3)
-    println(f"${redString("Red")} wins? ${checkWinner(a3, Red)}")
-    println(f"${blueString("Blue")} wins? ${checkWinner(a3, Blue)}")
+    println(f"${redString("Red")} wins? ${hasContiguousLine(a3, Red)}")
+    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a3, Blue)}")
   }
   
 

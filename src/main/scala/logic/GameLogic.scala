@@ -90,7 +90,7 @@ object GameLogic {
     })
   }
 
-  def checkWinner(b: Board, c: Cell): Boolean = {
+  def hasContiguousLine(b: Board, c: Cell): Boolean = {
 
     @tailrec
     def buildStartLine(b: Board, c: Cell, i: Int, res: List[Coord]): List[Coord] = {

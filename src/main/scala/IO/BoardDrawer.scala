@@ -3,9 +3,14 @@ package IO
 import Core.Cells.{Blue, Board, Cell, Red}
 import IO.ColorUtils._
 
+import scala.annotation.tailrec
+
 object BoardDrawer {
 
   def drawBoard(board: Board): Unit = {
+
+
+    drawBoardHeader(board.length)
 
   }
 
@@ -16,26 +21,27 @@ object BoardDrawer {
     println(f"${IniOffSet}${HeadPattern * (len - 1)}")
   }
 
-  def drawBoardBody(len: Int, cellLst: List[Cell], lineString: String): Unit = {
+  def drawBoardBody(board: Board, len: Int, index: List[Int]): Unit = {
     val iniLine = redColor("* ")
     val endLine = redColor(" *")
     val iniOffset = " "
     val offset = "  "
 
 
-
-    def drawCell(cellLst: List[Cell], cellsString: String):String = cellLst match {
-        case Nil => cellsString
-        case c::cs => {
-          val cell = c match {
-            case Red => redColor("X")
-            case Blue => blueColor("O")
-            case _ => "."
-          }
-          drawCell(cs,f"${cellsString} - ${cell}")
+    @tailrec
+    def drawCell(cellLst: List[Cell], cellsString: String): String = cellLst match {
+      case Nil => cellsString
+      case c :: cs => {
+        val cell = c match {
+          case Red => redColor("X")
+          case Blue => blueColor("O")
+          case _ => "."
         }
+        drawCell(cs, f"${cellsString} - ${cell}")
+      }
     }
 
+    @tailrec
     def drawPatternBody(col: Int, lineString: String): String = {
       val bar = "\\"
       col match {
@@ -45,14 +51,26 @@ object BoardDrawer {
 
     }
 
-    val first: String = cellLst.head match {
-      case Red => redColor("X")
-      case Blue => blueColor("O")
-      case _ => "."
+    (board,index) match {
+      case (x :: Nil,i::Nil) => {
+        val first: String = x.head match {
+          case Red => redColor("X")
+          case Blue => blueColor("O")
+          case _ => "."
+        }
+        println(f"${"  " * i}${iniLine}${first}${drawCell(x.tail, "")}${endLine}")
+      }
+      case (x :: xs, i::is) => {
+        val first: String = x.head match {
+          case Red => redColor("X")
+          case Blue => blueColor("O")
+          case _ => "."
+        }
+        println(f"${"  " * i}${iniLine}${first}${drawCell(x.tail, "")}${endLine}")
+        println(f"${iniOffset}${"  " * i}${offset}${drawPatternBody(len,"")}")
+        drawBoardBody(xs,len,is)
+      }
     }
-
-    println(f"${iniLine}${first}${drawCell(cellLst.tail,lineString)}${endLine}")
-    println(f"${iniOffset}${offset}${drawPatternBody(len,lineString)}")
   }
 
   def drawBoardFooter(len: Int): Unit ={

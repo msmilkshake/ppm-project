@@ -19,6 +19,8 @@ object BoardDrawer {
   def drawBoardBody(len: Int, cellLst: List[Cell], lineString: String): Unit = {
     val iniLine = redColor("* ")
     val endLine = redColor(" *")
+    val iniOffset = " "
+    val offset = "  "
 
 
 
@@ -35,11 +37,9 @@ object BoardDrawer {
     }
 
     def drawPatternBody(col: Int, lineString: String): String = {
-      val iniOffset = " "
-      val offset = "  "
       val bar = "\\"
-      len match {
-        case 0 => f"${iniOffset}${offset}${bar}${lineString}"
+      col match {
+        case 0 => f"${bar}${lineString}"
         case _ => drawPatternBody(col - 1, f"${lineString} / \\")
       }
 
@@ -52,7 +52,15 @@ object BoardDrawer {
     }
 
     println(f"${iniLine}${first}${drawCell(cellLst.tail,lineString)}${endLine}")
-    println(drawPatternBody(len,lineString))
+    println(f"${iniOffset}${offset}${drawPatternBody(len,lineString)}")
+  }
+
+  def drawBoardFooter(len: Int): Unit ={
+    val IniFootOffSet = blueColor(" *")
+    val FootPattern = blueColor("   *")
+
+    println(f"${"  " * len}${IniFootOffSet}${FootPattern * (len - 1)}")
+
   }
 
 }

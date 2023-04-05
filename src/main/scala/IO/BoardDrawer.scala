@@ -52,12 +52,12 @@ object BoardDrawer {
 
     (board,index) match {
       case (x :: Nil,i::Nil) => {
-        val first: String = x.head match {
+        val first1: String = x.head match {
           case Red => redColor("X")
           case Blue => blueColor("O")
           case _ => "."
         }
-        println(f"${"  " * i}${iniLine}${first}${drawCell(x.tail, "")}${endLine}")
+        println(f"${"  " * i}${iniLine}${first1}${drawCell(x.tail, "")}${endLine}")
       }
       case (x :: xs, i::is) => {
         val first: String = x.head match {

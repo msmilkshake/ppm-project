@@ -57,7 +57,24 @@ object Hex extends App {
         mainLoop(GameLogic.playTurn(cont))
 
       case Undo =>
-        ???
+        cont.stateHistory match {
+          case Nil =>
+            IOUtils.displayNoUndoMoves()
+            mainLoop(Container(
+              cont.gameState,
+              cont.stateHistory,
+              GameRunning,
+              cont.saveExists
+            ))
+          case lastState :: tail =>
+            IOUtils.displayUndoSuccess()
+            mainLoop(Container(
+              lastState,
+              tail,
+              GameRunning,
+              cont.saveExists
+            ))
+        }
 
       case GameWon =>
         BoardPrinter.printBoard(cont.gameState.board)

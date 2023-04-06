@@ -1,6 +1,6 @@
 package tui
 
-import io.IOUtils
+import io.{GameSaveSerializer, IOUtils}
 import logic.Difficulty.Difficulty
 import logic.ProgramState.ProgramState
 import logic.{Cells, GameState, ProgramState}
@@ -32,6 +32,10 @@ object Container {
 
   def startNewGame()(c: Container): Container = {
     Container(c.gameState, c.stateHistory, ProgramState.GameRunning, c.saveExists)
+  }
+
+  def resumeGame()(c: Container): Container = {
+    GameSaveSerializer.getSavedGame()
   }
 
   def navToSettings()(c: Container): Container = {

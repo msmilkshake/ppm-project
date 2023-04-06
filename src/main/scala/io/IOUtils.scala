@@ -14,6 +14,14 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
 object IOUtils {
+
+  val saveFilePath = "states/savefile"
+  def displayUndoSuccess(): Unit =
+    println(greenString("Undid the last move successfully."))
+
+  def displayNoUndoMoves(): Unit = 
+    println(redString("There are no moves to Undo.\n"))
+
   def displayComputerPlay(row: Int, col: Int): Unit = {
     println(f"${blueString("Computer")} played at coords: ${greenString(f"$row $col")}.")
   }
@@ -50,8 +58,6 @@ object IOUtils {
   def saveState(c: Container) = {
 
   }
-
-  val saveFilePath = "states/savefile"
 
   def displayCurrentSettings(gs: GameState): Unit = {
     val p2 = gs.computerDifficulty match {
@@ -162,7 +168,6 @@ object IOUtils {
               println(redString("The coordinates are out of range.\n"))
               None
             } else {
-              println()
               Some((r, c))
             }
           case Failure(_) =>
@@ -186,6 +191,7 @@ object IOUtils {
       f"(format: ${boldString("'row'")} <space> ${boldString("'col'")}),\n" +
       f"Or enter ${boldString("'M'")} to go to the ${boldString("Main Menu")},\n" +
       f"Or ${boldString("'U'")} to ${boldString("Undo")} the last move")
+    println()
     input match {
       case "M" => (None, MainMenu)
       case "U" => (None, Undo)

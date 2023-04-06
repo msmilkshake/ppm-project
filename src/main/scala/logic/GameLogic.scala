@@ -1,6 +1,6 @@
 package logic
 
-import io.IOUtils
+import io.{GameSaveSerializer, IOUtils}
 import logic.Board.Board
 import logic.Cells.{Blue, Cell, Empty, Red}
 import logic.Coord.Coord
@@ -69,8 +69,11 @@ object GameLogic {
   def playTurn(c: Container): Container = {
     val (gs1, state) = playerMove(c.gameState)
     state match {
-      case MainMenu => return ???
-      case Undo => return ???
+      case MainMenu =>
+        GameSaveSerializer.serializeContainer(c)
+        return Container(c.gameState, c.stateHistory, MainMenu, IOUtils.checkSaveExists())
+      case Undo =>
+        return Container(gs1, c.stateHistory, state, c.saveExists)
       case _ =>
     }
     if (hasContiguousLine(gs1.board, Red)) {

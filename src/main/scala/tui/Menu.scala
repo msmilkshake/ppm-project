@@ -24,7 +24,7 @@ object Menu {
 
   // -- Main Menu entries --
   val mainNewGame = CommandLineOption(labels._1, Container.startNewGame())
-  val mainContinue = CommandLineOption(labels._2, Container.navToSettings())
+  val mainContinue = CommandLineOption(labels._2, Container.resumeGame())
   val showCurrSettings = CommandLineOption(labels._12, Container.showCurrSettings())
 
   // -- Settings entries --

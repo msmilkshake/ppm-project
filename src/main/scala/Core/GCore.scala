@@ -1,6 +1,7 @@
 package Core
 
-import Core.Cells.Board
+import Core.Board.Board
+
 
 object GCore {
 

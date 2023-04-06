@@ -33,8 +33,8 @@ object GameSaveSerializer {
   }
   
   def boardToStr(board: Board): String = {
-    (board foldRight "")((line, acc) => {
-      val strLine = (line foldRight acc)((cell, result) => {
+    (board foldLeft "")((acc, line) => {
+      val strLine = (line foldLeft acc)((result, cell) => {
         cell match {
           case logic.Cells.Red => f"${result}R"
           case logic.Cells.Blue => f"${result}B"

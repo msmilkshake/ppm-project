@@ -13,12 +13,12 @@ import scala.annotation.tailrec
 object GameLogic {
 
   val adjacency: List[(Int, Int)] = List(
-    (-1, 0),  // top-left
-    (-1, 1),  // top-right
-    (0, 1),   // right
-    (1, 0),   // bottom-right
-    (1, -1),  // bottom-left
-    (0, -1),  // left
+    (-1, 0), // top-left
+    (-1, 1), // top-right
+    (0, 1), // right
+    (1, 0), // bottom-right
+    (1, -1), // bottom-left
+    (0, -1), // left
   )
 
   @tailrec
@@ -44,15 +44,7 @@ object GameLogic {
   def computerMove(gs: GameState, computer: Difficulty): GameState = {
     computer match {
       case logic.Difficulty.Easy => easyMove(gs)
-      case logic.Difficulty.Medium => ???
-    }
-  }
-
-  def play(board: Board, player: Cell, row: Int, col: Int): Board = {
-    board.zipWithIndex map {
-      case (cells, i) => cells.zipWithIndex map {
-        case (cell, j) => if (i == row && j == col) player else cell
-      }
+      case logic.Difficulty.Medium => mediumMove(gs)
     }
   }
 
@@ -64,6 +56,37 @@ object GameLogic {
       gs.computerDifficulty,
       newRand,
       gs.winner)
+  }
+
+  def mediumMove(gs: GameState): GameState = {
+    getAllCells(gs.board, Blue) match {
+      case Nil => easyMove(gs)
+      case list =>
+        val validPositions = list filter (coord => getAdjacents(gs.board, Empty, coord).nonEmpty)
+        validPositions match {
+          case Nil => easyMove(gs)
+          case positions =>
+            val (index, newRand) = gs.random.nextInt(validPositions.length)
+            val candidates = getAdjacents(gs.board, Empty, positions(index))
+            val (playIndex, newRand2) = newRand.nextInt(candidates.length)
+            val (row, col) = candidates(playIndex)
+            IOUtils.displayComputerPlay(row + 1, col + 1)
+
+            GameState(gs.boardLen,
+              play(gs.board, Blue, row, col),
+              gs.computerDifficulty,
+              newRand2.asInstanceOf[MyRandom],
+              gs.winner)
+        }
+    }
+  }
+
+  def play(board: Board, player: Cell, row: Int, col: Int): Board = {
+    board.zipWithIndex map {
+      case (cells, i) => cells.zipWithIndex map {
+        case (cell, j) => if (i == row && j == col) player else cell
+      }
+    }
   }
 
   def playTurn(c: Container): Container = {

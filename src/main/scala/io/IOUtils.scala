@@ -1,9 +1,12 @@
 package io
 
-import io.StringUtils.{blueString, boldString, boldText, greenString, redString, resetColor}
-import logic.Cells.Cell
-import logic.{GameState, Difficulty}
-import ui.tui.{CommandLineOption, GameContainer}
+import io.StringUtils.{blueString, boldString, greenString, redString}
+import logic.Board.Board
+import logic.Cells.{Blue, Cell, Red}
+import logic.Coord.Coord
+import logic.ProgramState.{Exit, GameRunning, MainMenu, ProgramState, Undo}
+import logic.{Difficulty, GameState}
+import tui.{CommandLineOption, Container}
 
 import java.io.File
 import scala.annotation.tailrec
@@ -12,14 +15,44 @@ import scala.util.{Failure, Success, Try}
 
 object IOUtils {
   def displayComputerPlay(row: Int, col: Int): Unit = {
-    println(f"${blueString("Computer")} played at coords: ${greenString(f"${row} $col")}.")
-  }
-
-  def saveState(c: GameContainer) = {
-    
+    println(f"${blueString("Computer")} played at coords: ${greenString(f"$row $col")}.")
   }
   
+  def displayGoodbyeMessage(): Unit = {
+    println("Goodbye! \uD83D\uDC4B")
+  }
+
+  def displayWinner(cell: Cell): ProgramState = {
+    val border = greenString("* = = = = = = = = = = = = = = = = *")
+    val s1 = greenString(" \\\\  ~     ~     ~     ~     ~  //")
+    val s2 = greenString(" //  ~     ~     ~     ~     ~  \\\\")
+    val msg = cell match {
+      case Red =>
+        f"${greenString(" ||      ")}" +
+          f"${redString(boldString("# Player  WINS! #"))}" +
+          f"${greenString("      ||")}"
+      case Blue =>
+        f"${greenString(" ||     ")}" +
+          f"${blueString(boldString("# Computer  WINS! #"))}" +
+          f"${greenString("     ||")}"
+    }
+    
+    println(f"\n$border\n$s1\n$msg\n$s2\n$border")
+    println(f"Press ${boldString("Enter")} for ${boldString("Main Menu")} " +
+      f"or ${boldString("Q")} to ${boldString("Quit the Game")}")
+    
+    getUserInput() match {
+      case "Q" => Exit
+      case _ => MainMenu
+    }
+  }
+
+  def saveState(c: Container) = {
+
+  }
+
   val saveFilePath = "states/savefile"
+
   def displayCurrentSettings(gs: GameState): Unit = {
     val p2 = gs.computerDifficulty match {
       case Difficulty.Easy => "Easy"
@@ -72,14 +105,15 @@ object IOUtils {
   def optionPrompt(title: String, options: Map[Int, CommandLineOption]): Option[CommandLineOption] = {
     println(greenString(boldString(f"-- $title --")))
     options.toList map ((option: (Int, CommandLineOption)) =>
-        println(f"${boldString(f"${option._1})")} ${option._2.name}"))
+      println(f"${boldString(f"${option._1})")} ${option._2.name}"))
 
     getUserInputInt("Select an option") match {
       case Success(i) => println(); options.get(i)
       case Failure(_) => println(redString("Invalid number!\n")); optionPrompt(title, options)
     }
   }
-  
+
+  @tailrec
   def promptBoardLen(): Int = {
     numberPrompt("Enter the desired board length") match {
       case n if n < 3 || n > 99 =>
@@ -96,6 +130,7 @@ object IOUtils {
   def warningOccupiedCell(): Unit = {
     println(redString("Cell is already occupied!\n"))
   }
+
   def checkSaveExists(): Boolean = {
     val saveFile = new File(saveFilePath)
     saveFile.exists()
@@ -103,33 +138,61 @@ object IOUtils {
 
   def deleteSaveFile(): Unit = {
     val saveFile = new File(saveFilePath)
-    saveFile.exists() match {
-      case true => saveFile.delete() match {
-        case true => println("Save file deleted successfully!\n")
-        case false => println("Could not delete the save file.\n")
+    if (saveFile.exists()) {
+      if (saveFile.delete()) {
+        println("Save file deleted successfully!\n")
+      } else {
+        println("Could not delete the save file.\n")
       }
-      case false => println("There's no save file to delete.\n")
+    } else {
+      println("There's no save file to delete.\n")
+    }
+  }
+  
+  def deleteFileQuiet(): Unit = {
+    new File(saveFilePath).delete()
+  }
+
+  def validateCoords(coord: String, len: Int): Option[Coord] = {
+    coord.split("\\s+") match {
+      case Array(row, col) =>
+        Try((row.toInt, col.toInt)) match {
+          case Success((r, c)) =>
+            if (r < 1 || r > len || c < 1 || c > len) {
+              println(redString("The coordinates are out of range.\n"))
+              None
+            } else {
+              println()
+              Some((r, c))
+            }
+          case Failure(_) =>
+            println(redString("Invalid coordinates!\n"))
+            None
+        }
+      case _ =>
+        println(redString("Invalid coordinates!\n"))
+        None
     }
   }
 
   @tailrec
-  def promptCoords(cell: Cell, len: Int): (Int, Int) = {
+  def actionPrompt(cell: Cell, board: Board): (Option[Coord], ProgramState) = {
+    BoardPrinter.printBoard(board)
     val player = cell match {
       case logic.Cells.Red => redString("Player 1")
       case logic.Cells.Blue => blueString("Player 2")
     }
-    val coords = 
-      coordPrompt(f"$player Enter Coordinates (format: 'row' <space> 'col')\n" +
-        "Or enter'M' to go to the Main Menu or 'U' to Undo the last move")
-    coords match {
-      case (-1, -1) => (-1, -1)
-      case (row, col) =>
-        if (row < 1 || row > len || col < 1 || col > len) {
-          println("The coordinates are out of range.\n")
-          promptCoords(cell, len)
-        } else {
-          println()
-          (row, col)
+    val input = prompt(f"$player Enter ${boldString("Coordinates")} " +
+      f"(format: ${boldString("'row'")} <space> ${boldString("'col'")}),\n" +
+      f"Or enter ${boldString("'M'")} to go to the ${boldString("Main Menu")},\n" +
+      f"Or ${boldString("'U'")} to ${boldString("Undo")} the last move")
+    input match {
+      case "M" => (None, MainMenu)
+      case "U" => (None, Undo)
+      case string =>
+        validateCoords(string, board.length) match {
+          case None => actionPrompt(cell, board)
+          case Some(coord) => (Some(coord), GameRunning)
         }
     }
   }

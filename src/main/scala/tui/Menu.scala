@@ -1,6 +1,6 @@
-package ui.tui
+package tui
 
-import logic.{GameState, Difficulty}
+import logic.Difficulty
 
 import scala.collection.immutable.ListMap
 
@@ -8,7 +8,7 @@ object Menu {
   
   val labels = (
     "Start New Game",                             //  1
-    "Continue Last Game",                         //  2
+    "Resume Saved Game",                          //  2
     "Game Settings",                              //  3
     "Quit",                                       //  4
     "Set Board Length",                           //  5
@@ -23,26 +23,26 @@ object Menu {
   
 
   // -- Main Menu entries --
-  val mainNewGame = CommandLineOption(labels._1, GameContainer.startNewGame())
-  val mainContinue = CommandLineOption(labels._2, GameContainer.navToSettings())
-  val showCurrSettings = CommandLineOption(labels._12, GameContainer.showCurrSettings())
+  val mainNewGame = CommandLineOption(labels._1, Container.startNewGame())
+  val mainContinue = CommandLineOption(labels._2, Container.navToSettings())
+  val showCurrSettings = CommandLineOption(labels._12, Container.showCurrSettings())
 
   // -- Settings entries --
-  val settingsBoardLen = CommandLineOption(labels._5, GameContainer.setGameBoardLength())
-  val settingsDifficulty = CommandLineOption(labels._6, GameContainer.navToSetPlayer2Type())
-  val settingsEraseSavedGame = CommandLineOption(labels._7, GameContainer.deleteSavedGame())
+  val settingsBoardLen = CommandLineOption(labels._5, Container.setGameBoardLength())
+  val settingsDifficulty = CommandLineOption(labels._6, Container.navToSetPlayer2Type())
+  val settingsEraseSavedGame = CommandLineOption(labels._7, Container.deleteSavedGame())
 
   // -- Player 2 Setup entries --
   val settingDifficultyEasy =
-    CommandLineOption(labels._8, GameContainer.setDifficulty(Difficulty.Easy))
+    CommandLineOption(labels._8, Container.setDifficulty(Difficulty.Easy))
   val settingDifficultyMedium =
-    CommandLineOption(labels._9, GameContainer.setDifficulty(Difficulty.Medium))
+    CommandLineOption(labels._9, Container.setDifficulty(Difficulty.Medium))
   
   // -- Navigation entries --
-  val navMain = CommandLineOption(labels._10, GameContainer.navToMainMenu())
-  val navSettings = CommandLineOption(labels._3, GameContainer.navToSettings())
-  val navBackSettings = CommandLineOption(labels._11, GameContainer.navToSettings())
-  val navQuit = CommandLineOption(labels._4, GameContainer.exitProgram())
+  val navMain = CommandLineOption(labels._10, Container.navToMainMenu())
+  val navSettings = CommandLineOption(labels._3, Container.navToSettings())
+  val navBackSettings = CommandLineOption(labels._11, Container.navToSettings())
+  val navQuit = CommandLineOption(labels._4, Container.exitProgram())
 
 
   val mainWithSavedGame: ListMap[Int, CommandLineOption] =

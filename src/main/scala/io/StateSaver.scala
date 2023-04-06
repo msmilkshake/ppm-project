@@ -1,18 +1,17 @@
 package io
 
 import logic.GameState
-import ui.tui.GameContainer
+import tui.Container
 
 object StateSaver {
 
-  def serializeContainer(c: GameContainer): Unit = {
+  def serializeContainer(c: Container): Unit = {
     val header = f"${c.programState match {
       case logic.ProgramState.MainMenu => 1
       case logic.ProgramState.Settings => 2
-      case logic.ProgramState.StartGame => 3
-      case logic.ProgramState.GameRunning => 4
-      case logic.ProgramState.GameWon => 5
-      case logic.ProgramState.Exit => 6
+      case logic.ProgramState.GameRunning => 3
+      case logic.ProgramState.GameWon => 4
+      case logic.ProgramState.Exit => 5
     }}\n"
     val curState = serializeState(c.gameState)
   }

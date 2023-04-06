@@ -1,19 +1,18 @@
 package logic
 
-import io.BoardPrinter.printBoard
 import io.IOUtils
 import logic.Board.Board
 import logic.Cells.{Blue, Cell, Empty, Red}
+import logic.Coord.Coord
 import logic.Difficulty.Difficulty
-import ui.tui.GameContainer
+import logic.ProgramState.{GameWon, MainMenu, ProgramState, Undo}
+import tui.Container
 
 import scala.annotation.tailrec
 
 object GameLogic {
-  
-  type Coord = (Int, Int)
-  
-  val adjacency = List(
+
+  val adjacency: List[(Int, Int)] = List(
     (-1, 0), // top-left
     (-1, 1), // top-right
     (0, 1), // right
@@ -21,20 +20,20 @@ object GameLogic {
     (1, -1), // bottom-left
     (0, -1), // left
   )
-  
+
   @tailrec
-  def playerMove(gs: GameState): GameState = {
-    printBoard(gs.board)
-    IOUtils.promptCoords(Red, gs.boardLen) match {
-      case (row, col) if row == -1 && col == -1 => gs
-      case (row, col) =>
+  def playerMove(gs: GameState): (GameState, ProgramState) = {
+    IOUtils.actionPrompt(Red, gs.board) match {
+      case (None, state) => (gs, state)
+      case (Some((row, col)), state) =>
         gs.board(row - 1)(col - 1) match {
           case Empty =>
             val newBoard = play(gs.board, Red, row - 1, col - 1)
-            GameState(gs.boardLen,
+            (GameState(gs.boardLen,
               newBoard,
               gs.computerDifficulty,
-              gs.random)
+              gs.random,
+              gs.winner), state)
           case _ =>
             IOUtils.warningOccupiedCell()
             playerMove(gs)
@@ -63,13 +62,46 @@ object GameLogic {
     GameState(gs.boardLen,
       play(gs.board, Blue, row, col),
       gs.computerDifficulty,
-      newRand)
+      newRand,
+      gs.winner)
   }
 
-  def playTurn(c: GameContainer): GameContainer = {
-    val gs1 = playerMove(c.gameState)
+  def playTurn(c: Container): Container = {
+    val (gs1, state) = playerMove(c.gameState)
+    state match {
+      case MainMenu => return ???
+      case Undo => return ???
+      case _ =>
+    }
+    if (hasContiguousLine(gs1.board, Red)) {
+      return Container(
+        GameState(gs1.boardLen,
+          gs1.board,
+          gs1.computerDifficulty,
+          gs1.random,
+          Red),
+        c.stateHistory,
+        GameWon,
+        c.saveExists
+      )
+    }
     val gs2 = computerMove(gs1, c.gameState.computerDifficulty)
-    GameContainer(gs2, c.gameState :: c.stateHistory, c.programState, c.saveExists)
+    if (hasContiguousLine(gs2.board, Blue)) {
+      return Container(
+        GameState(gs2.boardLen,
+          gs2.board,
+          gs2.computerDifficulty,
+          gs2.random,
+          Blue),
+        c.stateHistory,
+        GameWon,
+        c.saveExists
+      )
+    }
+    Container(gs2,
+      c.gameState :: c.stateHistory,
+      c.programState,
+      c.saveExists)
   }
 
   def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {
@@ -93,7 +125,7 @@ object GameLogic {
     def buildStartLine(b: Board, c: Cell, i: Int, res: List[Coord]): List[Coord] = {
       i match {
         case 0 => res
-        case n =>
+        case _ =>
           c match {
             case Red => buildStartLine(b, c, i - 1, (i - 1, 0) :: res)
             case Blue => buildStartLine(b, c, i - 1, (0, i - 1) :: res)
@@ -141,17 +173,17 @@ object GameLogic {
         case _ :: posTail => buildAdjacencyList(b, c, posTail, set)
       }
     }
-    
+
     (buildStartLine(b, c, b.length, Nil) foldRight false)(
       (coord, result) => result ||
         winnerPath(b, c, buildAdjacencyList(b, c, List(coord), Set())))
   }
-  
+
   def getAdjacents(board: Board, cell: Cell, pos: Coord): List[Coord] = {
-    
+
     @tailrec
     def adjacents(b: Board, c: Cell, p: Coord,
-            adj: List[Coord], res: List[Coord]): List[Coord] = {
+                  adj: List[Coord], res: List[Coord]): List[Coord] = {
       adj match {
         case Nil => res
         case (rowOffset, colOffset) :: tail =>
@@ -166,7 +198,7 @@ object GameLogic {
           }
       }
     }
-    
+
     adjacents(board, cell, pos, adjacency, Nil)
   }
 

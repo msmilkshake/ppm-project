@@ -1,6 +1,6 @@
 package tui
 
-import io.{GameSaveSerializer, IOUtils}
+import io.{SaveState, IOUtils}
 import logic.Difficulty.Difficulty
 import logic.ProgramState.ProgramState
 import logic.{Cells, GameState, ProgramState}
@@ -10,8 +10,7 @@ import scala.annotation.tailrec
 case class Container(gameState: GameState,
                      stateHistory: List[GameState],
                      programState: ProgramState,
-                     saveExists: Boolean) {
-}
+                     saveExists: Boolean)
 
 object Container {
 
@@ -35,7 +34,7 @@ object Container {
   }
 
   def resumeGame()(c: Container): Container = {
-    GameSaveSerializer.getSavedGame()
+    SaveState.getSavedGame()
   }
 
   def navToSettings()(c: Container): Container = {

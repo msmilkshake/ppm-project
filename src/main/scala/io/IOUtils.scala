@@ -6,7 +6,7 @@ import logic.Cells.{Blue, Cell, Red}
 import logic.Coord.Coord
 import logic.ProgramState.{Exit, GameRunning, MainMenu, ProgramState, Undo}
 import logic.{Difficulty, GameState}
-import tui.{CommandLineOption, Container}
+import tui.CommandLineOption
 
 import java.io.File
 import scala.annotation.tailrec
@@ -55,10 +55,6 @@ object IOUtils {
     }
   }
 
-  def saveState(c: Container) = {
-
-  }
-
   def displayCurrentSettings(gs: GameState): Unit = {
     val p2 = gs.computerDifficulty match {
       case Difficulty.Easy => "Easy"
@@ -82,23 +78,6 @@ object IOUtils {
     getUserInputInt(msg) match {
       case Success(i) => println(); i
       case Failure(_) => println(redString("Invalid number!\n")); numberPrompt(msg)
-    }
-  }
-
-  @tailrec
-  def coordPrompt(msg: String): (Int, Int) = {
-    prompt(msg).split("\\s+") match {
-      case Array("M") => (-1, -1)
-      case Array(row, col) =>
-        Try((row.toInt, col.toInt)) match {
-          case Success((r, c)) => (r, c)
-          case Failure(_) =>
-            println(redString("Invalid coordinates!\n"))
-            coordPrompt(msg)
-        }
-      case _ =>
-        println(redString("Invalid coordinates!\n"))
-        coordPrompt(msg)
     }
   }
 

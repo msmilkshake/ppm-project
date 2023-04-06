@@ -12,7 +12,7 @@ import scala.annotation.tailrec
 import scala.io.Source
 import scala.language.postfixOps
 
-object GameSaveSerializer {
+object SaveState {
 
   def serializeContainer(c: Container): Unit = {
     val writer = new PrintWriter(new File(IOUtils.saveFilePath))
@@ -38,7 +38,7 @@ object GameSaveSerializer {
         cell match {
           case logic.Cells.Red => f"${result}R"
           case logic.Cells.Blue => f"${result}B"
-          case logic.Cells.Empty => f"${result}-"
+          case logic.Cells.Empty => f"$result-"
         }
       })
       f"$strLine\n"

@@ -1,6 +1,6 @@
 package logic
 
-import io.{GameSaveSerializer, IOUtils}
+import io.{SaveState, IOUtils}
 import logic.Board.Board
 import logic.Cells.{Blue, Cell, Empty, Red}
 import logic.Coord.Coord
@@ -12,13 +12,13 @@ import scala.annotation.tailrec
 
 object GameLogic {
 
-  val adjacency: List[(Int, Int)] = List(
-    (-1, 0), // top-left
-    (-1, 1), // top-right
-    (0, 1), // right
-    (1, 0), // bottom-right
-    (1, -1), // bottom-left
-    (0, -1), // left
+  val adjacency: List[Coord] = List(
+    (-1, 0),   // top-left
+    (-1, 1),   // top-right
+    (0, 1),    // right
+    (1, 0),    // bottom-right
+    (1, -1),   // bottom-left
+    (0, -1),   // left
   )
 
   @tailrec
@@ -93,7 +93,7 @@ object GameLogic {
     val (gs1, state) = playerMove(c.gameState)
     state match {
       case MainMenu =>
-        GameSaveSerializer.serializeContainer(c)
+        SaveState.serializeContainer(c)
         return Container(c.gameState, c.stateHistory, MainMenu, IOUtils.checkSaveExists())
       case Undo =>
         return Container(gs1, c.stateHistory, state, c.saveExists)
@@ -137,9 +137,9 @@ object GameLogic {
   }
 
   def getAllCells(board: Board, cell: Cell): List[Coord] = {
-    (board.zipWithIndex foldRight List[Coord]())((line, acc) => {
-      (line._1.zipWithIndex foldRight acc)((zip, result) => {
-        if (zip._1 == cell) (line._2, zip._2) :: result
+    (board.zipWithIndex foldRight List[Coord]())((row, acc) => {
+      (row._1.zipWithIndex foldRight acc)((col, result) => {
+        if (col._1 == cell) (row._2, col._2) :: result
         else result
       })
     })
@@ -212,8 +212,8 @@ object GameLogic {
                   adj: List[Coord], res: List[Coord]): List[Coord] = {
       adj match {
         case Nil => res
-        case (rowOffset, colOffset) :: tail =>
-          val (row, col) = (pos._1 + rowOffset, pos._2 + colOffset)
+        case (rowShift, colShift) :: tail =>
+          val (row, col) = (p._1 + rowShift, p._2 + colShift)
           if (row < 0 || row >= board.length || col < 0 || col >= board.length) {
             adjacents(b, c, p, tail, res)
           } else {

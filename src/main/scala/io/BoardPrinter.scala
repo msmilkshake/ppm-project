@@ -36,19 +36,18 @@ object BoardPrinter {
     def buildLabels(labels: List[Int], s: String): String = {
       labels match {
         case Nil => s
-        case x :: xs => {
+        case x :: xs => 
           val padding = x / 10 match {
             case 0 => " "
             case _ => ""
           }
-          buildLabels(xs, f"${s}  ${padding}${x}")
-        }
+          buildLabels(xs, f"$s  $padding$x")
       }
     }
 
     println(buildLabels(labels, labelOffset))
-    println(f"${starOffset}${starPattern * (labels.length - 1)}")
-    println(f"${hexOffset}${hexPattern * labels.length}")
+    println(f"$starOffset${starPattern * (labels.length - 1)}")
+    println(f"$hexOffset${hexPattern * labels.length}")
   }
 
   @tailrec
@@ -62,14 +61,13 @@ object BoardPrinter {
       def buildCell(cells: List[Cell], s: String): String = {
         cells match {
           case Nil => s
-          case c :: cs => {
+          case c :: cs => 
             val cell = c match {
               case Red => redString("X")
               case Blue => blueString("O")
               case _ => " "
             }
-            buildCell(cs, f"${s} ${cell} |")
-          }
+            buildCell(cs, f"$s $cell |")
         }
       }
 
@@ -79,26 +77,25 @@ object BoardPrinter {
     @tailrec
     def buildHexSep(n: Int, s: String): String = {
       n match {
-        case 0 => f"${s}  ${redString("*")}"
-        case _ => buildHexSep(n - 1, f"${s} / \\")
+        case 0 => f"$s  ${redString("*")}"
+        case _ => buildHexSep(n - 1, f"$s / \\")
       }
     }
 
     (board, labels) match {
-      case (x :: Nil, n :: Nil) => {
+      case (x :: Nil, n :: Nil) => 
         val padding = n / 10 match {
           case 0 => " "
           case _ => ""
         }
-        println(buildgridLine(x, f"${padding}${offset * (n - 1)}${n}  ${redString("*")}  |"))
-      }
+        println(buildgridLine(x, f"$padding${offset * (n - 1)}$n  ${redString("*")}  |"))
 
       case (x :: xs, n :: ns) =>
         val padding = n / 10 match {
           case 0 => " "
           case _ => ""
         }
-        println(buildgridLine(x, f"${padding}${offset * (n - 1)}${n}  ${redString("*")}  |") +
+        println(buildgridLine(x, f"$padding${offset * (n - 1)}$n  ${redString("*")}  |") +
           "\n" + buildHexSep(len, f"   ${offset * n}${redString("*")}  \\"))
         printBoardGrid(xs, len, ns)
 
@@ -110,8 +107,8 @@ object BoardPrinter {
     val offset = "      "
     val hexPattern = " / \\"
     val starPattern = blueString(" * *")
-    println(f"${offset}${"  " * n}\\${hexPattern * (n - 1)} /")
-    println(f"${offset}${"  " * n}${starPattern * (n - 1)} ${blueString("*")}")
+    println(f"$offset${"  " * n}\\${hexPattern * (n - 1)} /")
+    println(f"$offset${"  " * n}${starPattern * (n - 1)} ${blueString("*")}")
   }
 
 }

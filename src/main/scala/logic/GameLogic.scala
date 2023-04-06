@@ -13,12 +13,12 @@ import scala.annotation.tailrec
 object GameLogic {
 
   val adjacency: List[(Int, Int)] = List(
-    (-1, 0), // top-left
-    (-1, 1), // top-right
-    (0, 1), // right
-    (1, 0), // bottom-right
-    (1, -1), // bottom-left
-    (0, -1), // left
+    (-1, 0),  // top-left
+    (-1, 1),  // top-right
+    (0, 1),   // right
+    (1, 0),   // bottom-right
+    (1, -1),  // bottom-left
+    (0, -1),  // left
   )
 
   @tailrec

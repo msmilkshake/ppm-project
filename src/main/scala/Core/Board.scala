@@ -8,7 +8,7 @@ object Board {
   def firstBoard (len: Int): Board = {
 
     def firstRow(row: List[Cell], len: Int): List[Cell] ={
-
+      .
     }
 
   }

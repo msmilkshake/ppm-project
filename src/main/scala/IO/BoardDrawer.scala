@@ -1,6 +1,7 @@
 package IO
 
-import Core.Cells.{Blue, Board, Cell, Empty, Red}
+import Core.Board.Board
+import Core.Cells.{Blue, Cell, Empty, Red}
 import IO.ColorUtils._
 
 import scala.annotation.tailrec

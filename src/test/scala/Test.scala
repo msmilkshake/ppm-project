@@ -1,12 +1,17 @@
-import Core.Cells.{Blue, Board, Empty, Red}
+import Core.Board.Board
+import Core.Cells.{Blue, Empty, Red}
+import Core.GCore.{filterCells}
 import IO.BoardDrawer.drawBoard
 
 object Test {
 
   def main(args: Array[String]): Unit = {
-    def b1 = List(List(Red, Empty, Blue), List(Empty, Empty, Empty), List(Empty, Blue, Empty))
+    def b1: Board = List(List(Red, Empty, Blue), List(Empty, Empty, Empty), List(Empty, Blue, Empty))
 
-    def b2 = List(List(Red, Empty, Blue, Blue), List(Empty, Empty, Empty, Blue), List(Empty, Blue, Empty, Red), List(Empty, Empty, Empty, Empty))
+    val emptyCells = filterCells(b1, Empty)
+    println(emptyCells)
+
+    def b2: Board = List(List(Red, Empty, Blue, Blue), List(Empty, Empty, Empty, Blue), List(Empty, Blue, Empty, Red), List(Empty, Empty, Empty, Empty))
 
     val b3: Board = List(
       List(Empty, Empty, Empty, Empty, Blue, Empty, Empty, Empty),
@@ -36,7 +41,7 @@ object Test {
       List(Empty, Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue, Empty),
       List(Red, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Blue),
     )
-    drawBoard(b2)
+
   }
 
 }

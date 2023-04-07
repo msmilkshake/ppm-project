@@ -8,7 +8,7 @@ object GameCore {
 
   def randomMove (board: Board, rand: MyRandom):((Int, Int),MyRandom) = {
     val validCells = filterCells(board,Empty) //lista celulas vazias validas para jogar
-    val (n, nextRnd) = rand.nextInt // primeira opção do MyRandom.nextInt
+    val (n, nextRnd) = rand.nextInt(validCells.length) // escolher um número entre 0 e o máx da lista (será o indice)
     (validCells(n),nextRnd.asInstanceOf[MyRandom]) //posição aleatória da lista de celulas vazias, nextRandom
   }
 

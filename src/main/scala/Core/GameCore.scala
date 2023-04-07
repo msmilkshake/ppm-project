@@ -7,9 +7,9 @@ import Core.Cells.{Cell, Empty}
 object GameCore {
 
   def randomMove (board: Board, rand: MyRandom):((Int, Int),MyRandom) = {
-    val validCells = filterCells(board,Empty) //celulas vazias validas para jogar
+    val validCells = filterCells(board,Empty) //lista celulas vazias validas para jogar
     val (n, nextRnd) = rand.nextInt // primeira opção do MyRandom.nextInt
-    (validCells(n),nextRnd.asInstanceOf[MyRandom])
+    (validCells(n),nextRnd.asInstanceOf[MyRandom]) //posição aleatória da lista de celulas vazias, nextRandom
   }
 
 

@@ -1,6 +1,6 @@
 import Core.Board.Board
 import Core.Cells.{Blue, Empty, Red}
-import Core.GCore.{filterCells}
+import Core.GameCore.filterCells
 import IO.BoardDrawer.drawBoard
 
 object Test {

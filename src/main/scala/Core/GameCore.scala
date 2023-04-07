@@ -4,7 +4,7 @@ import Core.Board.Board
 import Core.Cells.Cell
 
 
-object GCore {
+object GameCore {
 
 
   def filterCells (board: Board, cell: Cell): List[(Int,Int)] = {

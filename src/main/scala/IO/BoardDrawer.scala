@@ -21,6 +21,7 @@ object BoardDrawer {
     println(f"${IniOffSet}${HeadPattern * (len - 1)}")
   }
 
+  @tailrec
   def drawBoardBody(board: Board, len: Int, index: List[Int]): Unit = {
     val iniLine = redColor("* ")
     val endLine = redColor(" *")

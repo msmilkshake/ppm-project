@@ -1,11 +1,11 @@
-package logic
+package core
 
 import io.{SaveState, IOUtils}
-import logic.Board.Board
-import logic.Cells.{Blue, Cell, Empty, Red}
-import logic.Coord.Coord
-import logic.Difficulty.Difficulty
-import logic.ProgramState.{GameWon, MainMenu, ProgramState, Undo}
+import core.Board.Board
+import core.Cells.{Blue, Cell, Empty, Red}
+import core.Coord.Coord
+import core.Difficulty.Difficulty
+import core.ProgramState.{GameWon, MainMenu, ProgramState, Undo}
 import tui.Container
 
 import scala.annotation.tailrec
@@ -13,12 +13,12 @@ import scala.annotation.tailrec
 object GameLogic {
 
   val adjacency: List[Coord] = List(
-    (-1, 0),   // top-left
-    (-1, 1),   // top-right
-    (0, 1),    // right
-    (1, 0),    // bottom-right
-    (1, -1),   // bottom-left
-    (0, -1),   // left
+    (-1, 0), // top-left
+    (-1, 1), // top-right
+    (0, 1), // right
+    (1, 0), // bottom-right
+    (1, -1), // bottom-left
+    (0, -1), // left
   )
 
   @tailrec
@@ -43,8 +43,8 @@ object GameLogic {
 
   def computerMove(gs: GameState, computer: Difficulty): GameState = {
     computer match {
-      case logic.Difficulty.Easy => easyMove(gs)
-      case logic.Difficulty.Medium => mediumMove(gs)
+      case core.Difficulty.Easy => easyMove(gs)
+      case core.Difficulty.Medium => mediumMove(gs)
     }
   }
 
@@ -94,40 +94,41 @@ object GameLogic {
     state match {
       case MainMenu =>
         SaveState.serializeContainer(c)
-        return Container(c.gameState, c.stateHistory, MainMenu, IOUtils.checkSaveExists())
+        Container(c.gameState, c.stateHistory, MainMenu, IOUtils.checkSaveExists())
       case Undo =>
-        return Container(gs1, c.stateHistory, state, c.continueExists)
+        Container(gs1, c.stateHistory, state, c.continueExists)
       case _ =>
+        if (hasContiguousLine(gs1.board, Red)) {
+          return Container(
+            GameState(gs1.boardLen,
+              gs1.board,
+              gs1.computerDifficulty,
+              gs1.random,
+              Red),
+            c.stateHistory,
+            GameWon,
+            c.continueExists
+          )
+        }
+        val gs2 = computerMove(gs1, c.gameState.computerDifficulty)
+        if (hasContiguousLine(gs2.board, Blue)) {
+          return Container(
+            GameState(gs2.boardLen,
+              gs2.board,
+              gs2.computerDifficulty,
+              gs2.random,
+              Blue),
+            c.stateHistory,
+            GameWon,
+            c.continueExists
+          )
+        }
+        Container(gs2,
+          c.gameState :: c.stateHistory,
+          c.programState,
+          c.continueExists)
     }
-    if (hasContiguousLine(gs1.board, Red)) {
-      return Container(
-        GameState(gs1.boardLen,
-          gs1.board,
-          gs1.computerDifficulty,
-          gs1.random,
-          Red),
-        c.stateHistory,
-        GameWon,
-        c.continueExists
-      )
-    }
-    val gs2 = computerMove(gs1, c.gameState.computerDifficulty)
-    if (hasContiguousLine(gs2.board, Blue)) {
-      return Container(
-        GameState(gs2.boardLen,
-          gs2.board,
-          gs2.computerDifficulty,
-          gs2.random,
-          Blue),
-        c.stateHistory,
-        GameWon,
-        c.continueExists
-      )
-    }
-    Container(gs2,
-      c.gameState :: c.stateHistory,
-      c.programState,
-      c.continueExists)
+
   }
 
   def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {

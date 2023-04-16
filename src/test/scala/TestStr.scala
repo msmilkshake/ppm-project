@@ -4,6 +4,6 @@ import scala.io.Source
 
 object TestStr extends App {
   
-  SaveState.getSavedGame()
+  SaveState.getLastSavedGame()
 
 }

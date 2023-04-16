@@ -1,4 +1,4 @@
-package logic
+package core
 
 object Difficulty extends Enumeration {
   

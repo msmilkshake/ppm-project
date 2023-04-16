@@ -1,6 +1,6 @@
 package tui
 
-import logic.Difficulty
+import core.Difficulty
 
 import scala.collection.immutable.ListMap
 
@@ -45,7 +45,7 @@ object Menu {
   val navQuit = CommandLineOption(labels._4, Container.exitProgram())
 
 
-  val mainWithSavedGame: ListMap[Int, CommandLineOption] =
+  val mainWithContinue: ListMap[Int, CommandLineOption] =
     ListMap[Int, CommandLineOption](
       1 -> mainContinue,
       2 -> mainNewGame,
@@ -54,7 +54,7 @@ object Menu {
       0 -> navQuit
     )
 
-  val mainWithoutSavedGame: ListMap[Int, CommandLineOption] =
+  val mainWithoutContinue: ListMap[Int, CommandLineOption] =
     ListMap[Int, CommandLineOption](
       1 -> mainNewGame,
       2 -> navSettings,

@@ -1,10 +1,10 @@
 package tui
 
 import io.{BoardPrinter, IOUtils}
-import logic.Cells.{Empty, initBoard}
-import logic.Difficulty._
-import logic.ProgramState._
-import logic.{GameLogic, GameState, MyRandom}
+import core.Cells.{Empty, initBoard}
+import core.Difficulty._
+import core.ProgramState._
+import core.{GameLogic, GameState, MyRandom}
 
 import scala.annotation.tailrec
 
@@ -33,8 +33,8 @@ object Hex extends App {
     cont.programState match {
       case MainMenu =>
         val mainMenu =
-          if (cont.saveExists) Menu.mainWithSavedGame
-          else Menu.mainWithoutSavedGame
+          if (cont.continueExists) Menu.mainWithContinue
+          else Menu.mainWithoutContinue
 
         IOUtils.optionPrompt(mainMenuTitle, mainMenu) match {
           case None =>
@@ -64,7 +64,7 @@ object Hex extends App {
               cont.gameState,
               cont.stateHistory,
               GameRunning,
-              cont.saveExists
+              cont.continueExists
             ))
           case lastState :: tail =>
             IOUtils.displayUndoSuccess()
@@ -72,7 +72,7 @@ object Hex extends App {
               lastState,
               tail,
               GameRunning,
-              cont.saveExists
+              cont.continueExists
             ))
         }
 
@@ -91,7 +91,9 @@ object Hex extends App {
             Nil, nextState, IOUtils.checkSaveExists())
         )
 
-      case Exit => IOUtils.displayGoodbyeMessage()
+      case Exit => {
+        IOUtils.displayGoodbyeMessage()
+      }
     }
   }
 

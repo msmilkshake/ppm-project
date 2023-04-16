@@ -1,8 +1,8 @@
 import io.BoardPrinter.printBoard
 import io.StringUtils.{blueString, redString}
-import logic.Board.Board
-import logic.Cells._
-import logic.GameLogic.hasContiguousLine
+import core.Board.Board
+import core.Cells._
+import core.GameLogic.hasContiguousLine
 
 object Tests {
   

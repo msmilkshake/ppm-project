@@ -1,16 +1,16 @@
 package tui
 
 import io.{SaveState, IOUtils}
-import logic.Difficulty.Difficulty
-import logic.ProgramState.ProgramState
-import logic.{Cells, GameState, ProgramState}
+import core.Difficulty.Difficulty
+import core.ProgramState.ProgramState
+import core.{Cells, GameState, ProgramState}
 
 import scala.annotation.tailrec
 
 case class Container(gameState: GameState,
                      stateHistory: List[GameState],
                      programState: ProgramState,
-                     saveExists: Boolean)
+                     continueExists: Boolean)
 
 object Container {
 
@@ -30,19 +30,19 @@ object Container {
   }
 
   def startNewGame()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.GameRunning, c.saveExists)
+    Container(c.gameState, c.stateHistory, ProgramState.GameRunning, continueExists = true)
   }
 
   def resumeGame()(c: Container): Container = {
-    SaveState.getSavedGame()
+    SaveState.getLastSavedGame()
   }
 
   def navToSettings()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.Settings, c.saveExists)
+    Container(c.gameState, c.stateHistory, ProgramState.Settings, c.continueExists)
   }
 
   def navToMainMenu()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.MainMenu, c.saveExists)
+    Container(c.gameState, c.stateHistory, ProgramState.MainMenu, c.continueExists)
   }
 
   def setGameBoardLength()(c: Container): Container = {
@@ -55,7 +55,7 @@ object Container {
         c.gameState.winner),
       c.stateHistory,
       ProgramState.Settings,
-      c.saveExists)
+      c.continueExists)
   }
 
   def deleteSavedGame()(c: Container): Container = {
@@ -80,7 +80,7 @@ object Container {
         c.gameState.winner),
       c.stateHistory,
       ProgramState.Settings,
-      c.saveExists)
+      c.continueExists)
   }
 
   def showCurrSettings()(c: Container): Container = {
@@ -89,7 +89,7 @@ object Container {
   }
 
   def exitProgram()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.Exit, c.saveExists)
+    Container(c.gameState, c.stateHistory, ProgramState.Exit, c.continueExists)
   }
 
 }

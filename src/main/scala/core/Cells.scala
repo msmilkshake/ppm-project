@@ -1,6 +1,6 @@
-package logic
+package core
 
-import logic.Board.Board
+import core.Board.Board
 
 import scala.annotation.tailrec
 

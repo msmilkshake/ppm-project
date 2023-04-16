@@ -1,11 +1,11 @@
 package io
 
 import io.StringUtils.{blueString, boldString, greenString, redString}
-import logic.Board.Board
-import logic.Cells.{Blue, Cell, Red}
-import logic.Coord.Coord
-import logic.ProgramState.{Exit, GameRunning, MainMenu, ProgramState, Undo}
-import logic.{Difficulty, GameState}
+import core.Board.Board
+import core.Cells.{Blue, Cell, Red}
+import core.Coord.Coord
+import core.ProgramState.{Exit, GameRunning, MainMenu, ProgramState, Undo}
+import core.{Difficulty, GameState}
 import tui.CommandLineOption
 
 import java.io.File
@@ -14,8 +14,10 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
 object IOUtils {
-
-  val saveFilePath = "states/savefile"
+  
+  val saveFolderPath = "saves/"
+  val continuePath = "continue"
+  
   def displayUndoSuccess(): Unit =
     println(greenString("Undid the last move successfully."))
 
@@ -115,14 +117,22 @@ object IOUtils {
   def warningOccupiedCell(): Unit = {
     println(redString("Cell is already occupied!\n"))
   }
-
+  
   def checkSaveExists(): Boolean = {
-    val saveFile = new File(saveFilePath)
+    checkSaveExists(continuePath)
+  }
+
+  def checkSaveExists(file: String): Boolean = {
+    val saveFile = new File(f"${IOUtils.saveFolderPath}$file.sav")
     saveFile.exists()
   }
 
   def deleteSaveFile(): Unit = {
-    val saveFile = new File(saveFilePath)
+    deleteSaveFile(continuePath)
+  }
+  
+  def deleteSaveFile(file: String): Unit = {
+    val saveFile = new File(f"${IOUtils.saveFolderPath}$file.sav")
     if (saveFile.exists()) {
       if (saveFile.delete()) {
         println("Save file deleted successfully!\n")
@@ -135,7 +145,7 @@ object IOUtils {
   }
   
   def deleteFileQuiet(): Unit = {
-    new File(saveFilePath).delete()
+    new File(f"${IOUtils.saveFolderPath}$continuePath.sav").delete()
   }
 
   def validateCoords(coord: String, len: Int): Option[Coord] = {
@@ -163,8 +173,8 @@ object IOUtils {
   def actionPrompt(cell: Cell, board: Board): (Option[Coord], ProgramState) = {
     BoardPrinter.printBoard(board)
     val player = cell match {
-      case logic.Cells.Red => redString("Player 1")
-      case logic.Cells.Blue => blueString("Player 2")
+      case core.Cells.Red => redString("Player 1")
+      case core.Cells.Blue => blueString("Player 2")
     }
     val input = prompt(f"$player Enter ${boldString("Coordinates")} " +
       f"(format: ${boldString("'row'")} <space> ${boldString("'col'")}),\n" +

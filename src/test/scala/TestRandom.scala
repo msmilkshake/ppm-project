@@ -1,6 +1,6 @@
 import Tests.b3
-import logic.Board.Board
-import logic.MyRandom
+import core.Board.Board
+import core.MyRandom
 
 object TestRandom {
   def main(args: Array[String]): Unit = {

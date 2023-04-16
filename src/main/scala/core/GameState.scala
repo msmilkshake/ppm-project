@@ -1,8 +1,8 @@
-package logic
+package core
 
-import logic.Board.Board
-import logic.Cells.Cell
-import logic.Difficulty.Difficulty
+import core.Board.Board
+import core.Cells.Cell
+import core.Difficulty.Difficulty
 
 case class GameState(boardLen: Int,
                      board: Board,

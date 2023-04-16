@@ -1,4 +1,4 @@
-package logic
+package core
 
 case class MyRandom(seed: Long) extends RandomWithState {
 

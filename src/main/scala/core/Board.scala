@@ -1,6 +1,6 @@
-package logic
+package core
 
-import logic.Cells.Cell
+import core.Cells.Cell
 
 object Board {
   type Board = List[List[Cell]]

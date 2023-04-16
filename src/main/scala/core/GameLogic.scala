@@ -96,7 +96,7 @@ object GameLogic {
         SaveState.serializeContainer(c)
         return Container(c.gameState, c.stateHistory, MainMenu, IOUtils.checkSaveExists())
       case Undo =>
-        return Container(gs1, c.stateHistory, state, c.saveExists)
+        return Container(gs1, c.stateHistory, state, c.continueExists)
       case _ =>
     }
     if (hasContiguousLine(gs1.board, Red)) {
@@ -108,7 +108,7 @@ object GameLogic {
           Red),
         c.stateHistory,
         GameWon,
-        c.saveExists
+        c.continueExists
       )
     }
     val gs2 = computerMove(gs1, c.gameState.computerDifficulty)
@@ -121,13 +121,13 @@ object GameLogic {
           Blue),
         c.stateHistory,
         GameWon,
-        c.saveExists
+        c.continueExists
       )
     }
     Container(gs2,
       c.gameState :: c.stateHistory,
       c.programState,
-      c.saveExists)
+      c.continueExists)
   }
 
   def randomMove(board: Board, rand: MyRandom): ((Int, Int), MyRandom) = {

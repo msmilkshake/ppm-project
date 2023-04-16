@@ -7,15 +7,15 @@ object Board {
 
   def firstBoard (len: Int): Board = {
 
-    def buildRow(row: List[Cell], len: Int): List[Cell] = len match {
+    def buildRow(row: List[Cell], i: Int): List[Cell] = i match {
       case 0 => row
-      case _ => buildRow(Empty::row,len - 1)
+      case _ => buildRow(Empty::row,i - 1)
     }
 
 
-    def buildBoard(board:Board, len: Int): Board = len match {
+    def buildBoard(board:Board, i: Int): Board = i match {
       case 0 => board
-      case _ => buildBoard(buildRow(Nil,len)::board, len - 1 )
+      case _ => buildBoard(buildRow(Nil,len)::board, i - 1 )
     }
     buildBoard(Nil, len)
   }

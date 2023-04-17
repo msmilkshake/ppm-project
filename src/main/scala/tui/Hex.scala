@@ -101,6 +101,7 @@ object Hex extends App {
       case Exit => 
         c.gameState.board match {
           case Some(_) => Serializer.saveGameAuto(c)
+          case None =>
         }
         IOUtils.displayGoodbyeMessage()
     }

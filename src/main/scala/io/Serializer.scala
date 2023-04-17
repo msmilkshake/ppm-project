@@ -23,7 +23,7 @@ object Serializer {
   
 
   def serializeContainer(c: Container, file: String): Unit = {
-    new File(f"${IOUtils.saveFolderPath}$file").mkdirs()
+    new File(f"${IOUtils.saveFolderPath}/last").mkdirs()
     val channel: FileChannel =
       FileChannel.open(Paths.get(f"${IOUtils.saveFolderPath}$file.sav"),
       StandardOpenOption.CREATE, StandardOpenOption.WRITE)

@@ -1,9 +1,9 @@
-import io.{SaveState, IOUtils}
+import io.{Serializer, IOUtils}
 
 import scala.io.Source
 
 object TestStr extends App {
   
-  SaveState.getLastSavedGame()
+  Serializer.getLastSavedGame()
 
 }

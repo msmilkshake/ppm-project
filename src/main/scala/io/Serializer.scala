@@ -3,7 +3,7 @@ package io
 import core.Board.Board
 import core.Cells.{Blue, Cell, Empty, Red}
 import core.Difficulty.{Easy, Medium}
-import core.ProgramState.GameRunning
+import core.ProgramState.{GameRunning, InMainMenu, ProgramState}
 import core.{GameState, MyRandom}
 import tui.Container
 
@@ -16,23 +16,30 @@ import scala.annotation.tailrec
 import scala.io.Source
 import scala.language.postfixOps
 
-object SaveState {
+object Serializer {
 
   // Just a BIG prime number to scramble the string saved as binary
   val saveEncoding = 0xCF17F32C9F7L
+  
 
-  def serializeContainer(c: Container): Unit = {
-    serializeContainer(c, IOUtils.continuePath)
-  }
-
-  def serializeContainer(c: Container, filePath: String): Unit = {
-    new File(IOUtils.saveFolderPath).mkdirs()
+  def serializeContainer(c: Container, file: String): Unit = {
+    new File(f"${IOUtils.saveFolderPath}$file").mkdirs()
     val channel: FileChannel =
-      FileChannel.open(Paths.get(f"${IOUtils.saveFolderPath}$filePath.sav"),
+      FileChannel.open(Paths.get(f"${IOUtils.saveFolderPath}$file.sav"),
       StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     channel.write(stateToByteBuffer(c.gameState))
     c.stateHistory map (state => channel.write(stateToByteBuffer(state)))
     channel.close()
+  }
+
+  def saveGameAuto(c: Container): Unit = {
+    serializeContainer(c, IOUtils.continuePath)
+  }
+  
+  def saveGame(c: Container): Unit = {
+    val saveName = IOUtils.promtSaveFilename()
+    serializeContainer(c, saveName)
+    IOUtils.displaySaveSuccess(saveName)
   }
 
   def stateToByteBuffer(gs: GameState): ByteBuffer = {
@@ -51,14 +58,14 @@ object SaveState {
   
 
   def stateToStr(gs: GameState): String = {
-    val header = f"${gs.boardLen},${
-      gs.computerDifficulty match {
+    val header = f"${
+      gs.difficulty match {
         case core.Difficulty.Easy => "E"
         case core.Difficulty.Medium => "M"
       }
     },${gs.random.seed}"
 
-    f"$header\n${boardToStr(gs.board)}\n"
+    f"$header\n${boardToStr(gs.board.get)}\n"
   }
 
   def boardToStr(board: Board): String = {
@@ -74,11 +81,11 @@ object SaveState {
     })
   }
   
-  def getLastSavedGame(): Container = {
-    getSavedGame(f"${IOUtils.saveFolderPath}${IOUtils.continuePath}")
+  def getLastSavedGame(c: Container): Container = {
+    getSavedGame(f"${IOUtils.saveFolderPath}${IOUtils.continuePath}", c, InMainMenu)
   }
 
-  def getSavedGame(path: String): Container = {
+  def getSavedGame(path: String, c: Container, ps: ProgramState): Container = {
 
     @tailrec
     def buildMoveHistory(linesList: List[String], history: List[GameState]): List[GameState] = {
@@ -102,7 +109,7 @@ object SaveState {
     val (remainingLines, gs) = buildGameState(linesList)
     val history = buildMoveHistory(remainingLines, Nil)
 
-    Container(gs, history, GameRunning, IOUtils.checkSaveExists())
+    Container(gs, history, ps, c.newGameSettings)
   }
 
   @tailrec
@@ -116,12 +123,11 @@ object SaveState {
 
   def deserializeGameState(header: String, boardLines: List[String]): GameState = {
     val headerSplit = header.split(",")
-    val boardLen = headerSplit(0).toInt
-    val difficulty = headerSplit(1) match {
+    val difficulty = headerSplit(0) match {
       case "E" => Easy
       case "M" => Medium
     }
-    val rand = MyRandom(headerSplit(2).toLong)
+    val rand = MyRandom(headerSplit(1).toLong)
 
     val board: Board = (boardLines foldRight List[List[Cell]]())((line, board) => {
       (line.split("") foldRight List[Cell]())((cellStr, list) => {
@@ -133,7 +139,7 @@ object SaveState {
       }) :: board
     })
 
-    GameState(boardLen, board, difficulty, rand, Empty)
+    GameState(Some(board), difficulty, rand, None)
   }
 
 }

@@ -1,12 +1,12 @@
 package io
 
-import io.StringUtils.{blueString, boldString, greenString, redString}
 import core.Board.Board
 import core.Cells.{Blue, Cell, Red}
 import core.Coord.Coord
-import core.ProgramState.{Exit, GameRunning, MainMenu, ProgramState, Undo}
-import core.{Difficulty, GameState}
-import tui.CommandLineOption
+import core.ProgramState.{Exit, GameRunning, InMainMenu, ProgramState, SaveGame, UndoMove}
+import core.{Difficulty, Settings}
+import io.StringUtils.{blueString, boldString, greenString, redString}
+import tui.{CommandLineOption, Container}
 
 import java.io.File
 import scala.annotation.tailrec
@@ -14,9 +14,13 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
 object IOUtils {
-  
+
   val saveFolderPath = "saves/"
-  val continuePath = "continue"
+  val continuePath = f"last/continue"
+
+  def displaySaveSuccess(saveName: String): Unit = {
+    greenString(f"Saved game with name: $saveName successfully.\n")
+  }
   
   def displayUndoSuccess(): Unit =
     println(greenString("Undid the last move successfully."))
@@ -32,7 +36,7 @@ object IOUtils {
     println("Goodbye! \uD83D\uDC4B")
   }
 
-  def displayWinner(cell: Cell): ProgramState = {
+  def displayWinner(cell: Cell): Unit = {
     val border = greenString("* = = = = = = = = = = = = = = = = *")
     val s1 = greenString(" \\\\  ~     ~     ~     ~     ~  //")
     val s2 = greenString(" //  ~     ~     ~     ~     ~  \\\\")
@@ -48,23 +52,26 @@ object IOUtils {
     }
     
     println(f"\n$border\n$s1\n$msg\n$s2\n$border")
+  }
+
+  def promptEndGameOption(): ProgramState = {
     println(f"Press ${boldString("Enter")} for ${boldString("Main Menu")} " +
       f"or ${boldString("Q")} to ${boldString("Quit the Game")}")
-    
+
     getUserInput() match {
       case "Q" => Exit
-      case _ => MainMenu
+      case _ => InMainMenu
     }
   }
 
-  def displayCurrentSettings(gs: GameState): Unit = {
-    val p2 = gs.computerDifficulty match {
+  def displayNewGameSettings(s: Settings): Unit = {
+    val difficulty = s.difficulty match {
       case Difficulty.Easy => "Easy"
       case Difficulty.Medium => "Medium"
     }
-    println(boldString("-- Current Settings --"))
-    println(f"${redString("Board length:")} ${blueString(f"${gs.boardLen}")}")
-    println(f"${redString("Computer difficulty:")} ${blueString(p2)}\n")
+    println(boldString("-- New Game Settings --"))
+    println(f"${redString("Board length:")} ${blueString(f"${s.boardLength}")}")
+    println(f"${redString("Computer difficulty:")} ${blueString(difficulty)}\n")
   }
 
 
@@ -86,6 +93,35 @@ object IOUtils {
   def prompt(msg: String): String = {
     print(f"$msg: ")
     readLine.trim.toUpperCase
+  }
+
+  def promptRaw(msg: String): String = {
+    print(f"$msg: ")
+    readLine.trim
+  }
+  
+  def promtSaveFilename(): String = {
+    val filename =
+      IOUtils.promptRaw("Enter the save filename (alphanumeric characters only)")
+        
+    // The regex matches alphanumeric words one or more times,
+    // and then spaces or words zero or more times.
+    if (!filename.matches("\\w+[\\s\\w]*")) {
+      println(redString("Invalid filename.\n"))
+      promtSaveFilename()
+    } else {
+      filename
+    }
+  }
+  
+  def promptLoadGame(): String = {
+    IOUtils.promptRaw("Enter the save filename or " +
+      "leave blank to go back") match {
+      case s if s.isBlank || checkSaveExists(s) => s
+      case _ =>
+        println(redString("Invalid save file.\n"))
+        promptLoadGame()
+    }
   }
 
   @tailrec
@@ -118,21 +154,21 @@ object IOUtils {
     println(redString("Cell is already occupied!\n"))
   }
   
-  def checkSaveExists(): Boolean = {
+  def checkHasContinue(): Boolean = {
     checkSaveExists(continuePath)
   }
 
   def checkSaveExists(file: String): Boolean = {
-    val saveFile = new File(f"${IOUtils.saveFolderPath}$file.sav")
+    val saveFile = new File(f"$saveFolderPath$file.sav")
     saveFile.exists()
   }
 
-  def deleteSaveFile(): Unit = {
+  def deleteContinueFile(): Unit = {
     deleteSaveFile(continuePath)
   }
   
   def deleteSaveFile(file: String): Unit = {
-    val saveFile = new File(f"${IOUtils.saveFolderPath}$file.sav")
+    val saveFile = new File(f"$saveFolderPath$file.sav")
     if (saveFile.exists()) {
       if (saveFile.delete()) {
         println("Save file deleted successfully!\n")
@@ -145,7 +181,7 @@ object IOUtils {
   }
   
   def deleteFileQuiet(): Unit = {
-    new File(f"${IOUtils.saveFolderPath}$continuePath.sav").delete()
+    new File(f"$saveFolderPath$continuePath.sav").delete()
   }
 
   def validateCoords(coord: String, len: Int): Option[Coord] = {
@@ -179,11 +215,13 @@ object IOUtils {
     val input = prompt(f"$player Enter ${boldString("Coordinates")} " +
       f"(format: ${boldString("'row'")} <space> ${boldString("'col'")}),\n" +
       f"Or enter ${boldString("'M'")} to go to the ${boldString("Main Menu")},\n" +
-      f"Or ${boldString("'U'")} to ${boldString("Undo")} the last move")
+      f"Or ${boldString("'U'")} to ${boldString("Undo")} the last move,\n" +
+      f"Or ${boldString("'S'")} to ${boldString("Save Game")}.")
     println()
     input match {
-      case "M" => (None, MainMenu)
-      case "U" => (None, Undo)
+      case "M" => (None, InMainMenu)
+      case "U" => (None, UndoMove)
+      case "S" => (None, SaveGame)
       case string =>
         validateCoords(string, board.length) match {
           case None => actionPrompt(cell, board)

@@ -1,21 +1,21 @@
 package tui
 
-import io.{SaveState, IOUtils}
 import core.Difficulty.Difficulty
-import core.ProgramState.ProgramState
-import core.{Cells, GameState, ProgramState}
+import core.ProgramState.{GameRunning, ProgramState}
+import core.{Board, GameState, ProgramState, Settings}
+import io.{IOUtils, Serializer}
 
 import scala.annotation.tailrec
 
 case class Container(gameState: GameState,
                      stateHistory: List[GameState],
                      programState: ProgramState,
-                     continueExists: Boolean)
+                     newGameSettings: Settings)
 
 object Container {
 
   val labels = (
-    "Choose Computer Difficulty", //  1
+    "Choose Computer Difficulty",    //  1
     ""
   )
 
@@ -30,66 +30,83 @@ object Container {
   }
 
   def startNewGame()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.GameRunning, continueExists = true)
+    Container(GameState(
+      Some(Board.initBoard(c.newGameSettings.boardLength)),
+      c.newGameSettings.difficulty,
+      c.gameState.random,
+      c.gameState.winner),
+      c.stateHistory,
+      ProgramState.GameRunning,
+      c.newGameSettings)
   }
 
   def resumeGame()(c: Container): Container = {
-    SaveState.getLastSavedGame()
+    Container(c.gameState,
+      c.stateHistory,
+      GameRunning,
+      c.newGameSettings)
   }
 
   def navToSettings()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.Settings, c.continueExists)
+    Container(c.gameState,
+      c.stateHistory,
+      ProgramState.InSettings,
+      c.newGameSettings)
   }
 
   def navToMainMenu()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.MainMenu, c.continueExists)
+    Container(c.gameState,
+      c.stateHistory,
+      ProgramState.InMainMenu,
+      c.newGameSettings)
   }
 
   def setGameBoardLength()(c: Container): Container = {
-    val length = IOUtils.promptBoardLen()
-    Container(
-      GameState(length,
-        Cells.initBoard(length),
-        c.gameState.computerDifficulty,
-        c.gameState.random,
-        c.gameState.winner),
+    Container(c.gameState,
       c.stateHistory,
-      ProgramState.Settings,
-      c.continueExists)
+      ProgramState.InSettings,
+      Settings(IOUtils.promptBoardLen(),
+        c.newGameSettings.difficulty))
   }
 
   def deleteSavedGame()(c: Container): Container = {
-    IOUtils.deleteSaveFile()
+    IOUtils.deleteContinueFile()
     Container(
-      GameState(c.gameState.boardLen,
+      GameState(
         c.gameState.board,
-        c.gameState.computerDifficulty,
+        c.gameState.difficulty,
         c.gameState.random,
         c.gameState.winner),
       c.stateHistory,
-      ProgramState.Settings,
-      IOUtils.checkSaveExists())
+      ProgramState.InSettings,
+      c.newGameSettings)
   }
 
   def setDifficulty(d: Difficulty)(c: Container): Container = {
-    Container(
-      GameState(c.gameState.boardLen,
-        c.gameState.board,
-        d,
-        c.gameState.random,
-        c.gameState.winner),
+    Container(c.gameState,
       c.stateHistory,
-      ProgramState.Settings,
-      c.continueExists)
+      ProgramState.InSettings,
+      Settings(c.newGameSettings.boardLength, d))
+  }
+
+  def loadGame()(c: Container): Container = {
+    IOUtils.promptLoadGame() match {
+      case input if input.isBlank => c
+      case filename =>
+        Serializer.getSavedGame(f"${IOUtils.saveFolderPath}$filename", c, GameRunning)
+    }
   }
 
   def showCurrSettings()(c: Container): Container = {
-    IOUtils.displayCurrentSettings(c.gameState)
+    IOUtils.displayNewGameSettings(c.newGameSettings)
     c
   }
 
   def exitProgram()(c: Container): Container = {
-    Container(c.gameState, c.stateHistory, ProgramState.Exit, c.continueExists)
+    Container(c.gameState,
+      c.stateHistory,
+      ProgramState.Exit,
+      c.newGameSettings)
   }
 
 }

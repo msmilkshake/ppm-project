@@ -4,8 +4,7 @@ import core.Board.Board
 import core.Cells.Cell
 import core.Difficulty.Difficulty
 
-case class GameState(boardLen: Int,
-                     board: Board,
-                     computerDifficulty: Difficulty,
+case class GameState(board: Option[Board],
+                     difficulty: Difficulty,
                      random: MyRandom,
-                     winner: Cell)
+                     winner: Option[Cell])

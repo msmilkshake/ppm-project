@@ -1,13 +1,13 @@
 import Tests._
-import io.SaveState
+import io.Serializer
 
 object TestSerialize extends App {
-  println(SaveState.boardToStr(b1))
-  println(SaveState.boardToStr(b2))
-  println(SaveState.boardToStr(b3))
-  println(SaveState.boardToStr(b4))
-  println(SaveState.boardToStr(b5))
-  println(SaveState.boardToStr(a1))
-  println(SaveState.boardToStr(a2))
-  println(SaveState.boardToStr(a3))
+  println(Serializer.boardToStr(b1))
+  println(Serializer.boardToStr(b2))
+  println(Serializer.boardToStr(b3))
+  println(Serializer.boardToStr(b4))
+  println(Serializer.boardToStr(b5))
+  println(Serializer.boardToStr(a1))
+  println(Serializer.boardToStr(a2))
+  println(Serializer.boardToStr(a3))
 }

@@ -1,10 +1,9 @@
 package tui
 
-import io.{BoardPrinter, IOUtils}
-import core.Cells.{Empty, initBoard}
 import core.Difficulty._
 import core.ProgramState._
-import core.{GameLogic, GameState, MyRandom}
+import core.{GameLogic, GameState, MyRandom, Settings}
+import io.{BoardPrinter, IOUtils, Serializer}
 
 import scala.annotation.tailrec
 
@@ -14,86 +13,96 @@ object Hex extends App {
   val settingsMenuTitle = "Settings Menu"
 
   val random = MyRandom(0x54321)
-  val boardLen = 7
-  val board = initBoard(boardLen)
+  val boardLen = 5
   val difficulty = Easy
-  val winner = Empty
+  val initialState = GameState(None, difficulty, random, None)
+  val defaultSettings = Settings(boardLen, difficulty)
+  val defaultContainer = Container(initialState, Nil, InMainMenu, defaultSettings)
 
-  val saveExists = IOUtils.checkSaveExists()
-
-  val s = GameState(boardLen, board, difficulty, random, winner)
-  val startingContainer = Container(s, Nil, MainMenu, saveExists)
+  val container = IOUtils.checkHasContinue() match {
+    case true => Serializer.getLastSavedGame(defaultContainer)
+    case _ => defaultContainer
+  }
 
 
   // -- Program Entry Point --
-  mainLoop(startingContainer)
+  mainLoop(container)
 
   @tailrec
-  def mainLoop(cont: Container): Unit = {
-    cont.programState match {
-      case MainMenu =>
-        val mainMenu =
-          if (cont.continueExists) Menu.mainWithContinue
-          else Menu.mainWithoutContinue
+  def mainLoop(c: Container): Unit = {
+    c.programState match {
+      case InMainMenu =>
+        val mainMenu = c.gameState.board match {
+          case Some(_) => Menu.mainWithContinue
+          case None => Menu.mainWithoutContinue
+        }
 
         IOUtils.optionPrompt(mainMenuTitle, mainMenu) match {
           case None =>
             IOUtils.warningInvalidOption()
-            mainLoop(cont)
+            mainLoop(c)
           case Some(option) =>
-            mainLoop(option.exec(cont))
+            mainLoop(option.exec(c))
         }
 
-      case Settings =>
+      case InSettings =>
         IOUtils.optionPrompt(settingsMenuTitle, Menu.settingsMenu) match {
           case None =>
             IOUtils.warningInvalidOption()
-            mainLoop(cont)
+            mainLoop(c)
           case Some(option) =>
-            mainLoop(option.exec(cont))
+            mainLoop(option.exec(c))
         }
 
       case GameRunning =>
-        mainLoop(GameLogic.playTurn(cont))
+        mainLoop(GameLogic.playTurn(c))
 
-      case Undo =>
-        cont.stateHistory match {
+      case UndoMove =>
+        c.stateHistory match {
           case Nil =>
             IOUtils.displayNoUndoMoves()
             mainLoop(Container(
-              cont.gameState,
-              cont.stateHistory,
+              c.gameState,
+              c.stateHistory,
               GameRunning,
-              cont.continueExists
-            ))
+              c.newGameSettings))
+
           case lastState :: tail =>
             IOUtils.displayUndoSuccess()
             mainLoop(Container(
               lastState,
               tail,
               GameRunning,
-              cont.continueExists
-            ))
+              c.newGameSettings))
         }
 
+      case SaveGame =>
+        Serializer.saveGame(c)
+        mainLoop(Container(c.gameState,
+          c.stateHistory,
+          GameRunning,
+          c.newGameSettings))
+
       case GameWon =>
-        BoardPrinter.printBoard(cont.gameState.board)
-        val nextState = IOUtils.displayWinner(cont.gameState.winner)
+        BoardPrinter.printBoard(c.gameState.board.get)
+        IOUtils.displayWinner(c.gameState.winner.get)
+        val nextState = IOUtils.promptEndGameOption()
         IOUtils.deleteFileQuiet()
 
-        mainLoop(
-          Container(
-            GameState(cont.gameState.boardLen,
-              initBoard(cont.gameState.boardLen),
-              cont.gameState.computerDifficulty,
-              cont.gameState.random,
-              Empty),
-            Nil, nextState, IOUtils.checkSaveExists())
-        )
+        mainLoop(Container(
+          GameState(None,
+            c.gameState.difficulty,
+            c.gameState.random,
+            None),
+          Nil,
+          nextState,
+          c.newGameSettings))
 
-      case Exit => {
+      case Exit => 
+        c.gameState.board match {
+          case Some(_) => Serializer.saveGameAuto(c)
+        }
         IOUtils.displayGoodbyeMessage()
-      }
     }
   }
 

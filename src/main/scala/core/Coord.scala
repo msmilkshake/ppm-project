@@ -1,9 +1,7 @@
 package core
 
-object Coord{
-
+object Coord {
+  
   type Coord = (Int, Int)
-
+  
 }
-
-

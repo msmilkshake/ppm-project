@@ -1,7 +1,5 @@
 package io
 
-
-
 object StringUtils {
   val blueColor = "\u001b[0;34m"
   val redColor = "\u001b[0;31m"
@@ -24,5 +22,5 @@ object StringUtils {
   def boldString(s: String): String = {
     f"$boldText$s$resetColor"
   }
-
+  
 }

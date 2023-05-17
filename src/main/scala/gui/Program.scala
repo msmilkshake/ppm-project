@@ -8,8 +8,6 @@ import javafx.stage.{Screen, Stage}
 
 class Program extends Application {
 
-    
-
     override def start(primaryStage: Stage): Unit = {
         primaryStage.setTitle("Hex Game")
         Program.primaryStage = primaryStage

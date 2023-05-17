@@ -22,7 +22,7 @@ object BoardPrinter {
 
     printBoardHeader(labels)
     printBoardGrid(board, board.length, labels)
-    printBoardFooter(board.length)
+    printBoardFooter(board.length,labels)
   }
 
   def printBoardHeader(labels: List[Int]): Unit = {
@@ -71,7 +71,7 @@ object BoardPrinter {
         }
       }
 
-      f"${buildCell(row, s)}  ${redString("*")}"
+      f"${buildCell(row, s)}  ${redString("*")}  ${labels.head}"
     }
 
     @tailrec
@@ -103,12 +103,26 @@ object BoardPrinter {
 
   }
 
-  def printBoardFooter(n: Int): Unit = {
+  def printBoardFooter(n: Int, labels: List[Int]): Unit = {
+    def buildLabels(labels: List[Int], s: String): String = {
+      labels match {
+        case Nil => s
+        case x :: xs =>
+          val padding = x / 10 match {
+            case 0 => " "
+            case _ => ""
+          }
+          buildLabels(xs, f"$s  $padding$x")
+      }
+    }
+
     val offset = "      "
     val hexPattern = " / \\"
     val starPattern = blueString(" * *")
     println(f"$offset${"  " * n}\\${hexPattern * (n - 1)} /")
     println(f"$offset${"  " * n}${starPattern * (n - 1)} ${blueString("*")}")
+    println(f"${"  " * (n - 1)}  ${buildLabels(labels, offset)}")
+
   }
 
 }

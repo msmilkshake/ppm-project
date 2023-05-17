@@ -109,17 +109,17 @@ object Tests {
   )
 
   def main(args: Array[String]): Unit = {
-    printBoard(a1)
-    println(f"${redString("Red")} wins? ${hasContiguousLine(a1, Red)}")
-    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a1, Blue)}")
+//    printBoard(a1)
+//    println(f"${redString("Red")} wins? ${hasContiguousLine(a1, Red)}")
+//    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a1, Blue)}")
 
-    printBoard(a2)
-    println(f"${redString("Red")} wins? ${hasContiguousLine(a2, Red)}")
-    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a2, Blue)}")
-
-    printBoard(a3)
-    println(f"${redString("Red")} wins? ${hasContiguousLine(a3, Red)}")
-    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a3, Blue)}")
+    printBoard(b4)
+//    println(f"${redString("Red")} wins? ${hasContiguousLine(a2, Red)}")
+//    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a2, Blue)}")
+//
+//    printBoard(a3)
+//    println(f"${redString("Red")} wins? ${hasContiguousLine(a3, Red)}")
+//    println(f"${blueString("Blue")} wins? ${hasContiguousLine(a3, Blue)}")
   }
 
 

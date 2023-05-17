@@ -10,6 +10,7 @@ import tui.Container
 
 import scala.annotation.tailrec
 
+
 object GameLogic {
   
   type MoveFunction = GameState => (Option[Coord], Option[ProgramState], RandomWithState)
@@ -71,7 +72,7 @@ object GameLogic {
     }
   }
 
-  def doPlay(board: Board, player: Cell, row: Int, col: Int): Board = {
+  def setBoardCell(board: Board, player: Cell, row: Int, col: Int): Board = {
     board.zipWithIndex map {
       case (cells, i) => cells.zipWithIndex map {
         case (cell, j) => if (i == row && j == col) player else cell
@@ -83,12 +84,12 @@ object GameLogic {
     doMove(c.gameState, playerMove) match {
       case (None, Some(state), _) =>
         Container(c.gameState,
-          c.stateHistory,
+          c.playHistory,
           state,
           c.newGameSettings)
       case (Some((pRow, pCol)), _, _) =>
         val gs1 = GameState(
-          Some(doPlay(c.gameState.board.get, Red, pRow, pCol)),
+          Some(setBoardCell(c.gameState.board.get, Red, pRow, pCol)),
           c.gameState.difficulty,
           c.gameState.random,
           c.gameState.winner)
@@ -100,7 +101,7 @@ object GameLogic {
                 gs1.difficulty,
                 gs1.random,
                 Some(Red)),
-              c.stateHistory,
+              c.playHistory,
               GameWon,
               c.newGameSettings)
 
@@ -109,7 +110,7 @@ object GameLogic {
 
         val (Some((cRow, cCol)), _, rand) = doMove(gs1, computerMove(gs1))
         val gs2 = GameState(
-          Some(doPlay(gs1.board.get, Blue, cRow, cCol)),
+          Some(setBoardCell(gs1.board.get, Blue, cRow, cCol)),
           gs1.difficulty,
           rand,
           gs1.winner)
@@ -120,13 +121,13 @@ object GameLogic {
               gs2.difficulty,
               gs2.random,
               Some(Blue)),
-            c.stateHistory,
+            c.playHistory,
             GameWon,
             c.newGameSettings
           )
           case _ => Container(
             gs2,
-            c.gameState :: c.stateHistory,
+            (cRow,cCol)::(pRow,pCol) :: c.playHistory,
             c.programState,
             c.newGameSettings)
         }

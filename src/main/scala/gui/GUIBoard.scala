@@ -97,7 +97,7 @@ object GUIBoard {
             println(f"Hexagon clicked! row: ${i- 1}, col: ${j - 1}")
             val s: GameState = MainWindow.c.gameState
             if (s.board.get(i - 1)(j - 1) == Empty) {
-              val b1: Board = GameLogic.doPlay(s.board.get, Red, i - 1, j - 1)
+              val b1: Board = GameLogic.setBoardCell(s.board.get, Red, i - 1, j - 1)
               hexagon.setFill(Color.RED)
               if (GameLogic.hasContiguousLine(b1, Red)) {
                 println("PLAYER WINNER!")
@@ -108,7 +108,7 @@ object GUIBoard {
                 s.random,
                 None)
               val (Some((cRow, cCol)), _, rand) = GameLogic.doMove(gs1, GameLogic.computerMove(gs1))
-              val b2 = GameLogic.doPlay(gs1.board.get, Blue, cRow, cCol)
+              val b2 = GameLogic.setBoardCell(gs1.board.get, Blue, cRow, cCol)
               val gs2 = GameState(
                 Some(b2),
                 s.difficulty,
@@ -119,7 +119,7 @@ object GUIBoard {
                 println("COMPUTER WINNER!")
               }
               val c: Container = Container(gs2,
-                s :: MainWindow.c.stateHistory,
+                (cRow,cCol)::(i-1,j-1):: MainWindow.c.playHistory,
                 MainWindow.c.programState,
                 MainWindow.c.newGameSettings
               )

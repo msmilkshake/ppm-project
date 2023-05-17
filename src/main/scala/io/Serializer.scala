@@ -2,6 +2,7 @@ package io
 
 import core.Board.Board
 import core.Cells.{Blue, Cell, Empty, Red}
+import core.Coord.Coord
 import core.Difficulty.{Easy, Medium}
 import core.ProgramState.{GameRunning, InMainMenu, ProgramState}
 import core.{GameState, MyRandom}
@@ -28,7 +29,7 @@ object Serializer {
       FileChannel.open(Paths.get(f"${IOUtils.saveFolderPath}$file.sav"),
       StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     channel.write(stateToByteBuffer(c.gameState))
-    c.stateHistory map (state => channel.write(stateToByteBuffer(state)))
+    c.playHistory map (state => channel.write(stateToByteBuffer(state.asInstanceOf[GameState])))//TODO
     channel.close()
   }
 
@@ -109,7 +110,7 @@ object Serializer {
     val (remainingLines, gs) = buildGameState(linesList)
     val history = buildMoveHistory(remainingLines, Nil)
 
-    Container(gs, history, ps, c.newGameSettings)
+    Container(gs, history.asInstanceOf[List[Coord]], ps, c.newGameSettings) //TODO
   }
 
   @tailrec

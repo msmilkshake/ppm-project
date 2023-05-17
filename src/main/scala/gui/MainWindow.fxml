@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane minHeight="360.0" minWidth="400.0" prefHeight="400.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainWindow">
+   <children>
+      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="btnStart" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnPlayOnClicked" text="Start New Game" />
+            <Button fx:id="btnContinue" layoutX="35.0" layoutY="15.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnContinueOnClicked" text="Continue Game" GridPane.rowIndex="1" />
+            <Button fx:id="btnSettings" layoutX="35.0" layoutY="19.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnSettingsOnClicked" text="Game Settings" GridPane.rowIndex="2" />
+            <Button fx:id="btnQuit" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnQuitOnClicked" text="Quit Game" GridPane.rowIndex="3" />
+         </children>
+      </GridPane>
+      <Label text="Hex Game" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Current game settings:" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
+            <Label text="Board length:" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin></Label>
+            <Label fx:id="lblLength" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin></Label>
+            <Label layoutX="33.0" layoutY="52.0" text="Game difficulty:" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblDifficulty" layoutX="115.0" layoutY="52.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+            </Label>
+         </children>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </GridPane>
+   </children>
+   <columnConstraints>
+      <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" prefWidth="100.0" />
+      <ColumnConstraints maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" prefWidth="100.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" />
+      <RowConstraints minHeight="130.0" prefHeight="130.0" />
+      <RowConstraints minHeight="100.0" prefHeight="100.0" />
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+
+   </rowConstraints>
+</GridPane>

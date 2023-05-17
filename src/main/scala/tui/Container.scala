@@ -15,8 +15,8 @@ case class Container(gameState: GameState,
 object Container {
 
   val labels = (
-    "Choose Computer Difficulty",    //  1
-    ""
+      "Choose Computer Difficulty", //  1
+      ""
   )
 
   @tailrec

@@ -63,7 +63,7 @@ object Serializer {
         case core.Difficulty.Easy => "E"
         case core.Difficulty.Medium => "M"
       }
-    },${gs.random.seed}"
+    },${gs.random.getSeed()}"
 
     f"$header\n${boardToStr(gs.board.get)}\n"
   }

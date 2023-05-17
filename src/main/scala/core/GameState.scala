@@ -6,5 +6,5 @@ import core.Difficulty.Difficulty
 
 case class GameState(board: Option[Board],
                      difficulty: Difficulty,
-                     random: MyRandom,
+                     random: RandomWithState,
                      winner: Option[Cell])

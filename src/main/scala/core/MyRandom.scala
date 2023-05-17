@@ -2,10 +2,11 @@ package core
 
 case class MyRandom(seed: Long) extends RandomWithState {
 
-  def nextInt(): (Int, RandomWithState) = MyRandom.nextInt(seed)
+  override def nextInt(): (Int, RandomWithState) = MyRandom.nextInt(seed)
 
-  def nextInt(n: Int): (Int, RandomWithState) = MyRandom.nextInt(n, seed)
+  override def nextInt(n: Int): (Int, RandomWithState) = MyRandom.nextInt(n, seed)
 
+  override def getSeed(): Long = seed
 }
 
 object MyRandom {

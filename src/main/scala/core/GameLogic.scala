@@ -1,11 +1,10 @@
 package core
 
-import io.{IOUtils, Serializer}
-import core.Board.Board
-import core.Cells.{Blue, Cell, Empty, Red}
+import core.Cells.{Red, Empty, Blue}
 import core.Coord.Coord
-import core.Difficulty.{Difficulty, Easy, Medium}
-import core.ProgramState.{GameWon, InMainMenu, ProgramState, SaveGame, UndoMove}
+import core.ProgramState.ProgramState
+import core.Difficulty.{Easy, Medium}
+import io.IOUtils
 import tui.Container
 
 import scala.annotation.tailrec

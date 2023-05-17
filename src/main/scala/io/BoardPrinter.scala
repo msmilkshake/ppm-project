@@ -1,8 +1,9 @@
 package io
 
-import io.StringUtils._
+
 import core.Board.Board
-import core.Cells.{Blue, Cell, Red}
+import core.Cells.{Cell, Red, Blue, Empty}
+import io.StringUtils._
 
 import scala.annotation.tailrec
 
@@ -36,7 +37,7 @@ object BoardPrinter {
     def buildLabels(labels: List[Int], s: String): String = {
       labels match {
         case Nil => s
-        case x :: xs => 
+        case x :: xs =>
           val padding = x / 10 match {
             case 0 => " "
             case _ => ""
@@ -61,7 +62,7 @@ object BoardPrinter {
       def buildCell(cells: List[Cell], s: String): String = {
         cells match {
           case Nil => s
-          case c :: cs => 
+          case c :: cs =>
             val cell = c match {
               case Red => redString("X")
               case Blue => blueString("O")
@@ -83,7 +84,7 @@ object BoardPrinter {
     }
 
     (board, labels) match {
-      case (x :: Nil, n :: Nil) => 
+      case (x :: Nil, n :: Nil) =>
         val padding = n / 10 match {
           case 0 => " "
           case _ => ""

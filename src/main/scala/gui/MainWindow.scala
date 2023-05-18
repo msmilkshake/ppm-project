@@ -30,7 +30,7 @@ class MainWindow {
   private var lblDifficulty: Label = _
 
   val random = MyRandom(0x54321)
-  val boardLen = 7
+  val boardLen = 4
   val difficulty = Easy
   val defaultSettings = Settings(boardLen, difficulty)
 
@@ -73,7 +73,7 @@ class MainWindow {
         MainWindow.c.gameState.random,
         MainWindow.c.gameState.winner,
       ),
-      MainWindow.c.playHistory,
+      Nil,
       MainWindow.c.programState,
       MainWindow.c.newGameSettings
     )

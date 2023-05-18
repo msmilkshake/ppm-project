@@ -1,11 +1,11 @@
 package gui
 
-import io.{IOUtils, Serializer}
+import io.Serializer
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, TextField}
 
 class SavePopup {
-  
+
   @FXML
   var lblInvalid: Label = _
   @FXML
@@ -16,8 +16,8 @@ class SavePopup {
   var btnCancel: Button = _
 
   SavePopup.instance = this
-  
-  
+
+
   @FXML
   def initialize(): Unit = {
     txtSave.focusedProperty().addListener((_, _, isFocused) =>
@@ -27,7 +27,7 @@ class SavePopup {
         case false =>
       })
   }
-  
+
   def btnSaveOnClicked(): Unit = {
     txtSave.getText.matches("\\w+[\\s\\w]*") match {
       case true =>
@@ -36,13 +36,12 @@ class SavePopup {
       case false =>
         lblInvalid.setText("Invalid save filename.")
     }
-    }
   }
-  
+
   def btnCancelOnClicked(): Unit = {
     close()
   }
-  
+
   def close(): Unit = {
     btnCancel.getScene.getWindow.hide()
   }

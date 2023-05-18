@@ -2,8 +2,7 @@ package gui
 
 import core.Board.Board
 import core.Cells.{Blue, Empty, Red}
-import core.{Board, GameLogic, GameState}
-import javafx.scene.input.MouseEvent
+import core.{GameLogic, GameState}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Polygon, StrokeLineCap, StrokeLineJoin}
@@ -12,7 +11,7 @@ import tui.Container
 import scala.annotation.tailrec
 
 case class GUIBoard(n: Int) extends Pane() {
-
+  
   val h = GUIBoard.l * math.sqrt(3) / 2
 
   val widthMultiplier = (n + 1) / 2 * 2
@@ -43,7 +42,8 @@ case class GUIBoard(n: Int) extends Pane() {
   GUIBoard.createMargins(this)
 
   val grid: GUIBoard.HexGrid = GUIBoard.createGrid(this, n)
-  println()
+  
+  def initHexagons(b: Board) = GUIBoard.initHexagons(this, b)
 
 }
 
@@ -92,9 +92,7 @@ object GUIBoard {
           hexagon.setStrokeLineCap(StrokeLineCap.ROUND)
           hexagon.setStrokeLineJoin(StrokeLineJoin.ROUND)
           hexagon.setStrokeWidth(3.0)
-          hexagon.setIdenifier(f"i:${i - 1},j:${j - 1}")
           hexagon.setOnMouseClicked(_ => {
-            println(f"Hexagon clicked! row: ${i- 1}, col: ${j - 1}")
             val s: GameState = MainWindow.c.gameState
             if (s.board.get(i - 1)(j - 1) == Empty) {
               val b1: Board = GameLogic.setBoardCell(s.board.get, Red, i - 1, j - 1)
@@ -143,6 +141,20 @@ object GUIBoard {
     }
 
     intiRows(Nil, size)
+  }
+
+
+  def initHexagons(instance: GUIBoard, board: Board) = {
+    board.zipWithIndex map {
+      case (cells, i) => cells.zipWithIndex map {
+        case (cell, j) =>
+          cell match {
+            case Red => instance.grid(i)(j).setFill(Color.RED)
+            case Blue => instance.grid(i)(j).setFill(Color.DODGERBLUE)
+            case _ =>
+          }
+      }
+    }
   }
 
 

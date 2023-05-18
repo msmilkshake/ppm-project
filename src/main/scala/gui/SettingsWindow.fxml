@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane minHeight="360.0" minWidth="400.0" prefHeight="400.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SettingsWindow">
+   <children>
+      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" />
+            <Label text="Game Difficulty" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Label>
+            <RadioButton fx:id="rbEasy" mnemonicParsing="false" selected="true" text="Easy" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+               <toggleGroup>
+                  <ToggleGroup fx:id="gDifficulty" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rbMedium" mnemonicParsing="false" text="Medium" toggleGroup="$gDifficulty" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </RadioButton>
+            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+            <Label text="Board Length" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Label>
+            <Label text="(Must be between 4 and 25)" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
+            <TextField fx:id="txtBoardLength" maxWidth="60.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
+            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
+            <Label text="Erase Auto-Save" GridPane.columnSpan="2147483647" GridPane.rowIndex="8">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnEraseAutoSave" mnemonicParsing="false" onMouseClicked="#btnEraseAutoSaveOnClicked" text="Erase Auto-Save" GridPane.columnSpan="2147483647" GridPane.rowIndex="9" />
+            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="10" />
+            <Button fx:id="btnSave" mnemonicParsing="false" onMouseClicked="#btnSaveOnClicked" prefWidth="140.0" text="Save and Go Back" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin></Button>
+            <Button fx:id="btnDiscard" mnemonicParsing="false" onMouseClicked="#btnDiscardOnClicked" prefWidth="140.0" text="Discard and Go Back" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin></Button>
+         </children>
+      </GridPane>
+      <Label text="Game Settings" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+   </children>
+   <columnConstraints>
+      <ColumnConstraints hgrow="ALWAYS" minWidth="30.0" prefWidth="30.0" />
+      <ColumnConstraints maxWidth="340.0" minWidth="340.0" prefWidth="340.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="30.0" prefWidth="30.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" />
+      <RowConstraints minHeight="260.0" prefHeight="260.0" />
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
+
+   </rowConstraints>
+</GridPane>

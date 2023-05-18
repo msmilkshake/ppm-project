@@ -1,24 +1,25 @@
 package gui
 
-import core.Difficulty.{Easy, Medium}
+import core.Difficulty.Easy
 import core.ProgramState.InMainMenu
 import core.{Board, GameState, MyRandom, Settings}
 import io.{IOUtils, Serializer}
-import javafx.fxml.{FXML, FXMLLoader, Initializable}
-import javafx.scene.control.{Button, Label, TextField}
-import javafx.scene.layout.{ColumnConstraints, GridPane, Pane, Region, RowConstraints}
-import javafx.stage.Screen
+import javafx.application.Platform
+import javafx.fxml.{FXML, FXMLLoader}
+import javafx.scene.control.{Button, Label}
+import javafx.scene.layout.{ColumnConstraints, GridPane, RowConstraints}
+import javafx.scene.{Parent, Scene}
+import javafx.stage.{Modality, Screen, Stage}
 import tui.Container
 
-import java.net.URL
-import java.util.ResourceBundle
-
-class MainWindow extends Initializable {
+class MainWindow {
 
   @FXML
   private var btnStart: Button = _
   @FXML
   private var btnContinue: Button = _
+  @FXML
+  private var btnLoad: Button = _
   @FXML
   private var btnSettings: Button = _
   @FXML
@@ -29,10 +30,11 @@ class MainWindow extends Initializable {
   private var lblDifficulty: Label = _
 
   val random = MyRandom(0x54321)
-  val boardLen = 25
-  val difficulty = Medium
-  val initialState = GameState(None, difficulty, random, None)
+  val boardLen = 7
+  val difficulty = Easy
   val defaultSettings = Settings(boardLen, difficulty)
+
+  val initialState = GameState(None, defaultSettings.difficulty, random, None)
   val defaultContainer = Container(initialState, Nil, InMainMenu, defaultSettings)
 
   MainWindow.c = IOUtils.checkHasContinue() match {
@@ -40,10 +42,20 @@ class MainWindow extends Initializable {
     case _ => defaultContainer
   }
 
-  override def initialize(location: URL, resources: ResourceBundle): Unit = {
+  @FXML
+  def initialize(): Unit = {
+    refreshInfo()
+  }
+
+  MainWindow.instance = this
+
+  def refreshInfo(): Unit = {
     updateSettingsLabels(MainWindow.c)
-    if (!IOUtils.checkHasContinue()) {
-      btnContinue.setVisible(false)
+    MainWindow.c.gameState.board match {
+      case Some(_) =>
+        btnContinue.setVisible(true)
+      case None =>
+        btnContinue.setVisible(false)
     }
   }
 
@@ -57,7 +69,7 @@ class MainWindow extends Initializable {
     MainWindow.c = Container(
       GameState(
         Some(Board.initBoard(MainWindow.c.newGameSettings.boardLength)),
-        MainWindow.c.gameState.difficulty,
+        MainWindow.c.newGameSettings.difficulty,
         MainWindow.c.gameState.random,
         MainWindow.c.gameState.winner,
       ),
@@ -65,50 +77,84 @@ class MainWindow extends Initializable {
       MainWindow.c.programState,
       MainWindow.c.newGameSettings
     )
-    val gameBoard = new GUIBoard(MainWindow.c.newGameSettings.boardLength)
+    startGame(true)
+  }
+
+  def btnContinueOnClicked(): Unit = {
+    startGame(false)
+  }
+
+  def btnLoadOnClicked(): Unit = {
+    val popupStage: Stage = new Stage()
+    val fxmlLoader = new FXMLLoader(getClass.getResource("LoadPopup.fxml"))
+    val ViewRoot: Parent = fxmlLoader.load()
+    val scene = new Scene(ViewRoot)
+    popupStage.setScene(scene)
+    popupStage.initModality(Modality.WINDOW_MODAL)
+    popupStage.initOwner(btnLoad.getScene.getWindow)
+    popupStage.showAndWait()
+    LoadPopup.instance.filename match {
+      case Some(filename) => 
+        val path = f"${IOUtils.saveFolderPath}$filename"
+        MainWindow.c = Serializer.getSavedGame(path, MainWindow.c, MainWindow.c.programState)
+        startGame(false)
+      case None =>
+    }
+    
+  }
+
+  def btnSettingsOnClicked(): Unit = {
+    val fxmlLoader = new FXMLLoader(getClass.getResource("SettingsWindow.fxml"))
+    val settingsWindow = fxmlLoader.load().asInstanceOf[GridPane]
+
+    val scene = btnSettings.getScene
+    scene.setRoot(settingsWindow)
+    MainWindow.setWindowSizeAndCenter(settingsWindow.getWidth, settingsWindow.getHeight)
+  }
+
+  def btnQuitOnClicked(): Unit = {
+    finalizeAndExit()
+  }
+
+  def startGame(newGame: Boolean): Unit = {
+    val gameBoard = new GUIBoard(MainWindow.c.gameState.board.get.length)
+    if (!newGame) {
+      gameBoard.initHexagons(MainWindow.c.gameState.board.get)
+    }
     gameBoard.setId("gamePane")
     GameWindow.uiBoard = gameBoard
 
     val fxmlLoader = new FXMLLoader(getClass.getResource("GameWindow.fxml"))
     val gameWindow = fxmlLoader.load().asInstanceOf[GridPane]
-    
+
     val gamePane: GridPane = gameWindow.getChildren.get(0).asInstanceOf[GridPane]
     gamePane.add(gameBoard, 1, 1)
 
-    val rowConst: RowConstraints =  gamePane.getRowConstraints.get(1)
+    val rowConst: RowConstraints = gamePane.getRowConstraints.get(1)
     rowConst.setMinHeight(gameBoard.getHeight)
     rowConst.setPrefHeight(gameBoard.getHeight)
     rowConst.setMaxHeight(gameBoard.getHeight)
-    val colConst: ColumnConstraints =  gamePane.getColumnConstraints.get(1)
+    val colConst: ColumnConstraints = gamePane.getColumnConstraints.get(1)
     colConst.setMinWidth(gameBoard.getWidth)
     colConst.setPrefWidth(gameBoard.getWidth)
     colConst.setMaxWidth(gameBoard.getWidth)
-    
+
     val minWidth = gameBoard.getWidth
     val minHeight = gameBoard.getHeight + 40
     MainWindow.setWindowSizeAndCenter(minWidth, minHeight)
 
     val scene = btnStart.getScene
     scene.setRoot(gameWindow)
-
   }
 
-  def btnContinueOnClicked(): Unit = {
-
+  private def finalizeAndExit(): Unit = {
+    Platform.exit()
   }
-
-  def btnSettingsOnClicked(): Unit = {
-
-  }
-
-  def btnQuitOnClicked(): Unit = {
-
-  }
-
 
 }
 
 object MainWindow {
+  var instance: MainWindow = _
   var c: Container = _
 
   var widthWinExtra: Double = 12.0
@@ -127,7 +173,6 @@ object MainWindow {
 
     Program.primaryStage.setX(centerX - (width / 2))
     Program.primaryStage.setY(centerY - (height / 2))
-
   }
 
 }

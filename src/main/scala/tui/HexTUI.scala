@@ -1,6 +1,6 @@
 package tui
 
-import core.Cells.{Red, Empty, Blue}
+import core.Cells.Empty
 import core.Difficulty._
 import core.GameLogic.setBoardCell
 import core.ProgramState._
@@ -9,7 +9,7 @@ import io.{BoardPrinter, IOUtils, Serializer}
 
 import scala.annotation.tailrec
 
-object Hex extends App {
+object HexTUI extends App {
 
   val mainMenuTitle = "Main Menu"
   val settingsMenuTitle = "Settings Menu"

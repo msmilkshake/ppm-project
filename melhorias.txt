@@ -1,10 +1,10 @@
 Melhorar o easyMove e normalMove para uma função de ordem superior. DONE
 
-Melhorar a lógica de guardar os estados de jogo
+Melhorar a lógica de guardar os estados de jogo DONE
 
 Não mudar o myRandom dos Undos. DONE
 
-alterar o GameObject para uma case class (Necessário para a parte gráfica). -.-
+alterar o GameObject para uma case class (Necessário para a parte gráfica). DONE
 
 Melhorar as listas de adjacências para devolver o vencerdor assim que o encontra.
 

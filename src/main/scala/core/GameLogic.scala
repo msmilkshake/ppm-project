@@ -163,6 +163,17 @@ object GameLogic {
       }
     }
 
+    def checkStartLine(b: Board, c: Cell, i: Int, res: List[Coord]): Boolean = {
+      i match {
+        case 0 => false
+        case _ =>
+          c match {
+            case Red => buildStartLine(b, c, i - 1, (i - 1, 0) :: res)
+            case Blue => buildStartLine(b, c, i - 1, (0, i - 1) :: res)
+          }
+      }
+    }
+
     @tailrec
     def winnerPath(b: Board, c: Cell, path: List[Coord]): Boolean = {
       path match {

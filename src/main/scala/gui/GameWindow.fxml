@@ -26,7 +26,13 @@
       </GridPane>
       <AnchorPane maxHeight="35.0" maxWidth="-Infinity" minHeight="35.0" minWidth="-Infinity" prefHeight="35.0" GridPane.rowIndex="1">
          <children>
-            <Button fx:id="btnBack" layoutX="14.0" layoutY="2.0" mnemonicParsing="false" onMouseClicked="#btnBackOnClicked" text="Back" />
+            <HBox prefHeight="100.0" spacing="20.0">
+               <children>
+                  <Button fx:id="btnUndo" mnemonicParsing="false" onMouseClicked="#btnUndoOnClicked" prefWidth="70.0" text="Undo" />
+                  <Button mnemonicParsing="false" prefWidth="100.0" text="Save Game" />
+                  <Button fx:id="btnBack" mnemonicParsing="false" onMouseClicked="#btnBackOnClicked" prefWidth="70.0" text="Back" />
+               </children>
+            </HBox>
          </children>
       </AnchorPane>
    </children>

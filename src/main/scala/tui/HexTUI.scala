@@ -7,7 +7,7 @@ import io.{BoardPrinter, IOUtils, Serializer}
 
 import scala.annotation.tailrec
 
-object Hex extends App {
+object HexTUI extends App {
 
   val mainMenuTitle = "Main Menu"
   val settingsMenuTitle = "Settings Menu"

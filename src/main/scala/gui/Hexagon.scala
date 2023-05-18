@@ -4,17 +4,12 @@ import javafx.scene.shape.Polygon;
 
 case class Hexagon(x: Double, y: Double, side: Double) extends Polygon {
     
-    var id: String = _
-
     private def updateVertices(): Unit = Hexagon.updateVertices(this)
 
     setLayoutX(x)
     setLayoutY(y)
     updateVertices()
     
-    def setIdenifier(id: String): Unit = {
-        this.id = id
-    }
 }
 
 object Hexagon {
@@ -33,6 +28,5 @@ object Hexagon {
             -h, -hex.side / 2
         )
     }
-
-    def getSide(hex: Hexagon): Double = hex.side
+    
 }

@@ -1,6 +1,6 @@
 package tui
 
-import core.Cells.{Red, Empty, Blue}
+import core.Cells.Empty
 import core.Difficulty._
 import core.GameLogic.setBoardCell
 import core.ProgramState._

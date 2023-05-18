@@ -4,17 +4,15 @@ import core.Board.Board
 import core.Cells.{Blue, Cell, Empty, Red}
 import core.Coord.Coord
 import core.Difficulty.{Easy, Medium}
-import core.ProgramState.{GameRunning, InMainMenu, ProgramState}
+import core.ProgramState.{InMainMenu, ProgramState}
 import core.{GameState, MyRandom}
 import tui.Container
 
-import java.io.{File, PrintWriter}
+import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
-import java.nio.charset.Charset
 import java.nio.file.{Files, Paths, StandardOpenOption}
 import scala.annotation.tailrec
-import scala.io.Source
 import scala.language.postfixOps
 
 object Serializer {

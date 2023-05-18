@@ -1,6 +1,6 @@
 package gui
 
-import io.IOUtils
+import io.{IOUtils, Serializer}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, TextField}
 
@@ -17,7 +17,6 @@ class SavePopup {
 
   SavePopup.instance = this
   
-  var filename: Option[String] = None
   
   @FXML
   def initialize(): Unit = {
@@ -30,13 +29,13 @@ class SavePopup {
   }
   
   def btnSaveOnClicked(): Unit = {
-    filename = Some(txtSave.getText)
-    IOUtils.checkSaveExists(filename.get) match {
-      case false =>
-        filename = None
-        lblInvalid.setText("Invalid save filename.")
+    txtSave.getText.matches("\\w+[\\s\\w]*") match {
       case true =>
+        Serializer.serializeContainer(MainWindow.c, txtSave.getText)
         close()
+      case false =>
+        lblInvalid.setText("Invalid save filename.")
+    }
     }
   }
   

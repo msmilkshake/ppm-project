@@ -11,7 +11,7 @@ import tui.Container
 import scala.annotation.tailrec
 
 case class GUIBoard(n: Int) extends Pane() {
-  
+
   val h = GUIBoard.l * math.sqrt(3) / 2
 
   val widthMultiplier = (n + 1) / 2 * 2
@@ -42,7 +42,7 @@ case class GUIBoard(n: Int) extends Pane() {
   GUIBoard.createMargins(this)
 
   val grid: GUIBoard.HexGrid = GUIBoard.createGrid(this, n)
-  
+
   def initHexagons(b: Board) = GUIBoard.initHexagons(this, b)
 
 }
@@ -94,8 +94,9 @@ object GUIBoard {
           hexagon.setStrokeWidth(3.0)
           hexagon.setOnMouseClicked(_ => {
             val s: GameState = MainWindow.c.gameState
-            if (s.board.get(i - 1)(j - 1) == Empty) {
-              val b1: Board = GameLogic.setBoardCell(s.board.get, Red, i - 1, j - 1)
+            val (pRow, pCol) = (size - i, size - j)
+            if (s.board.get(pRow)(pCol) == Empty) {
+              val b1: Board = GameLogic.setBoardCell(s.board.get, Red, pRow, pCol)
               hexagon.setFill(Color.RED)
               if (GameLogic.hasContiguousLine(b1, Red)) {
                 println("PLAYER WINNER!")
@@ -112,12 +113,12 @@ object GUIBoard {
                 s.difficulty,
                 rand,
                 None)
-              GameWindow.uiBoard.grid(cRow)(cCol).setFill(Color.DODGERBLUE)
+              GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.DODGERBLUE)
               if (GameLogic.hasContiguousLine(gs2.board.get, Blue)) {
                 println("COMPUTER WINNER!")
               }
               val c: Container = Container(gs2,
-                (cRow,cCol)::(i-1,j-1):: MainWindow.c.playHistory,
+                (cRow, cCol) :: (pRow, pCol) :: MainWindow.c.playHistory,
                 MainWindow.c.programState,
                 MainWindow.c.newGameSettings
               )

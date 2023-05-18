@@ -96,7 +96,7 @@ class SettingsWindow {
       case Success(value) =>
         MainWindow.c = Container(
           MainWindow.c.gameState,
-          MainWindow.c.stateHistory,
+          MainWindow.c.playHistory,
           MainWindow.c.programState,
           Settings(value,
             rbEasy.isSelected match {

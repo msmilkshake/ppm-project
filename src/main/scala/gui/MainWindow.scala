@@ -73,7 +73,7 @@ class MainWindow {
         MainWindow.c.gameState.random,
         MainWindow.c.gameState.winner,
       ),
-      MainWindow.c.stateHistory,
+      MainWindow.c.playHistory,
       MainWindow.c.programState,
       MainWindow.c.newGameSettings
     )

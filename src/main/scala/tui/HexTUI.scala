@@ -1,6 +1,8 @@
 package tui
 
+import core.Cells.{Red, Empty, Blue}
 import core.Difficulty._
+import core.GameLogic.setBoardCell
 import core.ProgramState._
 import core.{GameLogic, GameState, MyRandom, Settings}
 import io.{BoardPrinter, IOUtils, Serializer}
@@ -58,19 +60,24 @@ object HexTUI extends App {
         mainLoop(GameLogic.playTurn(c))
 
       case UndoMove =>
-        c.stateHistory match {
+        c.playHistory match {
           case Nil =>
             IOUtils.displayNoUndoMoves()
             mainLoop(Container(
               c.gameState,
-              c.stateHistory,
+              c.playHistory,
               GameRunning,
               c.newGameSettings))
 
-          case lastState :: tail =>
+          case (cRow, cCol) :: (pRow, pCol) :: tail =>
             IOUtils.displayUndoSuccess()
-            mainLoop(Container(
-              lastState,
+            val b1 = setBoardCell(c.gameState.board.get, Empty, cRow, cCol)
+            val b2 = setBoardCell(b1, Empty, pRow, pCol)
+            mainLoop(Container(GameState(
+              Some(b2),
+              c.gameState.difficulty,
+              c.gameState.random,
+              c.gameState.winner),
               tail,
               GameRunning,
               c.newGameSettings))
@@ -79,7 +86,7 @@ object HexTUI extends App {
       case SaveGame =>
         Serializer.saveGame(c)
         mainLoop(Container(c.gameState,
-          c.stateHistory,
+          c.playHistory,
           GameRunning,
           c.newGameSettings))
 
@@ -98,7 +105,7 @@ object HexTUI extends App {
           nextState,
           c.newGameSettings))
 
-      case Exit => 
+      case Exit =>
         c.gameState.board match {
           case Some(_) => Serializer.saveGameAuto(c)
           case None =>

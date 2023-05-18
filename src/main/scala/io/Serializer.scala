@@ -29,7 +29,7 @@ object Serializer {
       FileChannel.open(Paths.get(f"${IOUtils.saveFolderPath}$file.sav"),
       StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     channel.write(stateToByteBuffer(c.gameState))
-    c.playHistory map (state => channel.write(stateToByteBuffer(state.asInstanceOf[GameState])))//TODO
+    c.playHistory map (coord => channel.write(coordToByteBuffer(coord)))
     channel.close()
   }
 
@@ -49,6 +49,13 @@ object Serializer {
     (stateString.chars().asLongStream().map(c => c * saveEncoding).toArray
       foldLeft byteBuffer)((buffer, long) => buffer.putLong(long)).flip()
   }
+
+  def coordToByteBuffer(coord: Coord): ByteBuffer ={
+    val coordString: String = coordToStr(coord)
+    val byteBuffer: ByteBuffer = ByteBuffer.allocate(coordString.length * 8)
+    (coordString.chars().asLongStream().map(c => c * saveEncoding).toArray
+      foldLeft byteBuffer) ((buffer, long) => buffer.putLong(long)).flip()
+  }
   
   def bytesToStr(bytes: Array[Byte]): String = {
     val longs: List[Long] = (bytes.grouped(8) map
@@ -67,6 +74,11 @@ object Serializer {
     },${gs.random.getSeed()}"
 
     f"$header\n${boardToStr(gs.board.get)}\n"
+  }
+
+  def coordToStr(coord: Coord): String = {
+
+    f"${coord._1},${coord._2};"
   }
 
   def boardToStr(board: Board): String = {
@@ -89,35 +101,35 @@ object Serializer {
   def getSavedGame(path: String, c: Container, ps: ProgramState): Container = {
 
     @tailrec
-    def buildMoveHistory(linesList: List[String], history: List[GameState]): List[GameState] = {
-      linesList match {
-        case Nil => history
-        case other =>
-          val (remainingLines, state) = buildGameState(other)
-          buildMoveHistory(remainingLines, history :+ state)
+    def buildMoveHistory(coordList: List[String], history: List[Coord]): List[Coord] = {
+      coordList match {
+        case List(_) => history
+        case coord::tail =>
+          val split = coord.split(",")
+          buildMoveHistory(tail, history :+ (split(0).toInt,split(1).toInt))
       }
     }
 
-    def buildGameState(linesList: List[String]): (List[String], GameState) = {
+    def buildGameState(linesList: List[String]): (String, GameState) = {
       val header = linesList.head
-      val (remainingLines, boardLines) = getBoardStrings(linesList.tail, Nil)
-      (remainingLines, deserializeGameState(header, boardLines))
+      val (historyLine, boardLines) = getBoardStrings(linesList.tail, Nil)
+      (historyLine, deserializeGameState(header, boardLines))
     }
 
     val linesList = bytesToStr(Files.readAllBytes(Paths.get(f"$path.sav")))
       .split("\n").toList
 
-    val (remainingLines, gs) = buildGameState(linesList)
-    val history = buildMoveHistory(remainingLines, Nil)
+    val (historyLine, gs) = buildGameState(linesList)
+    val history = buildMoveHistory(historyLine.split(";").toList, Nil)
 
-    Container(gs, history.asInstanceOf[List[Coord]], ps, c.newGameSettings) //TODO
+    Container(gs, history, ps, c.newGameSettings)
   }
 
+
   @tailrec
-  def getBoardStrings(content: List[String], lst: List[String]): (List[String], List[String]) = {
+  def getBoardStrings(content: List[String], lst: List[String]): (String,List[String]) = {
     content match {
-      case Nil => (Nil, lst)
-      case separator :: tail if separator isBlank => (tail, lst)
+      case separator :: tail if separator isBlank => (tail.head, lst)
       case line :: tail => getBoardStrings(tail, lst :+ line)
     }
   }

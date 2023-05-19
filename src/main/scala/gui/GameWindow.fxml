@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -28,9 +29,15 @@
          <children>
             <HBox prefHeight="100.0" spacing="20.0">
                <children>
-                  <Button fx:id="btnUndo" mnemonicParsing="false" onMouseClicked="#btnUndoOnClicked" prefWidth="70.0" text="Undo" />
-                  <Button mnemonicParsing="false" prefWidth="100.0" text="Save Game" />
-                  <Button fx:id="btnBack" mnemonicParsing="false" onMouseClicked="#btnBackOnClicked" prefWidth="70.0" text="Back" />
+                  <Button fx:id="btnUndo" mnemonicParsing="false" onMouseClicked="#btnUndoOnClicked" prefWidth="70.0" text="Undo">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin></Button>
+                  <Button fx:id="btnSave" mnemonicParsing="false" onMouseClicked="#btnSaveOnClicked" prefWidth="100.0" text="Save Game" />
+                  <Button fx:id="btnBack" mnemonicParsing="false" onMouseClicked="#btnBackOnClicked" prefWidth="70.0" text="Back">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin></Button>
                </children>
             </HBox>
          </children>

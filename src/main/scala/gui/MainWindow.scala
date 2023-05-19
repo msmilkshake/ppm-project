@@ -29,8 +29,8 @@ class MainWindow {
   @FXML
   private var lblDifficulty: Label = _
 
-  val random = MyRandom(0x54321)
-  val boardLen = 4
+  val random = MyRandom(IOUtils.loadSeed())
+  val boardLen = 7
   val difficulty = Easy
   val defaultSettings = Settings(boardLen, difficulty)
 
@@ -139,7 +139,7 @@ class MainWindow {
     colConst.setPrefWidth(gameBoard.getWidth)
     colConst.setMaxWidth(gameBoard.getWidth)
 
-    val minWidth = gameBoard.getWidth
+    val minWidth = math.max(gameBoard.getWidth, 324)
     val minHeight = gameBoard.getHeight + 40
     MainWindow.setWindowSizeAndCenter(minWidth, minHeight)
 
@@ -148,6 +148,7 @@ class MainWindow {
   }
 
   private def finalizeAndExit(): Unit = {
+    IOUtils.saveSeed(MainWindow.c.gameState.random.getSeed())
     Platform.exit()
   }
 

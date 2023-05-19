@@ -14,7 +14,7 @@ object HexTUI extends App {
   val mainMenuTitle = "Main Menu"
   val settingsMenuTitle = "Settings Menu"
 
-  val random = MyRandom(0x54321)
+  val random = MyRandom(IOUtils.loadSeed())
   val boardLen = 5
   val difficulty = Easy
   val initialState = GameState(None, difficulty, random, None)
@@ -110,6 +110,7 @@ object HexTUI extends App {
           case Some(_) => Serializer.saveGameAuto(c)
           case None =>
         }
+        IOUtils.saveSeed(c.gameState.random.getSeed())
         IOUtils.displayGoodbyeMessage()
     }
   }

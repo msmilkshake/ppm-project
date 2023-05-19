@@ -74,10 +74,10 @@ object Container {
     IOUtils.deleteContinueFile()
     Container(
       GameState(
-        c.gameState.board,
-        c.gameState.difficulty,
+        None,
+        c.newGameSettings.difficulty,
         c.gameState.random,
-        c.gameState.winner),
+        None),
       c.playHistory,
       ProgramState.InSettings,
       c.newGameSettings)

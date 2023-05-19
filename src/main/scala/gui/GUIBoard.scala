@@ -99,7 +99,16 @@ object GUIBoard {
               val b1: Board = GameLogic.setBoardCell(s.board.get, Red, pRow, pCol)
               hexagon.setFill(Color.RED)
               if (GameLogic.hasContiguousLine(b1, Red)) {
-                println("PLAYER WINNER!")
+                MainWindow.c = Container(
+                  GameState(
+                    None,
+                    MainWindow.c.newGameSettings.difficulty,
+                    MainWindow.c.gameState.random,
+                    Some(Red)),
+                  Nil,
+                  MainWindow.c.programState,
+                  MainWindow.c.newGameSettings)
+                GameWindow.instance.gameWon()
               }
               val gs1 = GameState(
                 Some(b1),
@@ -115,7 +124,16 @@ object GUIBoard {
                 None)
               GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.DODGERBLUE)
               if (GameLogic.hasContiguousLine(gs2.board.get, Blue)) {
-                println("COMPUTER WINNER!")
+                MainWindow.c = Container(
+                  GameState(
+                    None,
+                    MainWindow.c.newGameSettings.difficulty,
+                    MainWindow.c.gameState.random,
+                    Some(Blue)),
+                  Nil,
+                  MainWindow.c.programState,
+                  MainWindow.c.newGameSettings)
+                GameWindow.instance.gameWon()
               }
               val c: Container = Container(gs2,
                 (cRow, cCol) :: (pRow, pCol) :: MainWindow.c.playHistory,
@@ -150,8 +168,8 @@ object GUIBoard {
       case (cells, i) => cells.zipWithIndex map {
         case (cell, j) =>
           cell match {
-            case Red => instance.grid(i)(j).setFill(Color.RED)
-            case Blue => instance.grid(i)(j).setFill(Color.DODGERBLUE)
+            case Red => instance.grid(board.length - i - 1)(board.length - j - 1).setFill(Color.RED)
+            case Blue => instance.grid(board.length - i - 1)(board.length - j - 1).setFill(Color.DODGERBLUE)
             case _ =>
           }
       }

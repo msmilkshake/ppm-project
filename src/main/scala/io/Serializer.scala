@@ -40,19 +40,21 @@ object Serializer {
     serializeContainer(c, saveName)
     IOUtils.displaySaveSuccess(saveName)
   }
+  
+  def strToByteBuffer(str: String): ByteBuffer = {
+    val byteBuffer: ByteBuffer = ByteBuffer.allocate(str.length * 8)
+    (str.chars().asLongStream().map(c => c * saveEncoding).toArray
+      foldLeft byteBuffer)((buffer, long) => buffer.putLong(long)).flip()
+  }
 
   def stateToByteBuffer(gs: GameState): ByteBuffer = {
     val stateString: String = stateToStr(gs)
-    val byteBuffer: ByteBuffer = ByteBuffer.allocate(stateString.length * 8)
-    (stateString.chars().asLongStream().map(c => c * saveEncoding).toArray
-      foldLeft byteBuffer)((buffer, long) => buffer.putLong(long)).flip()
+    strToByteBuffer(stateString)
   }
 
   def coordToByteBuffer(coord: Coord): ByteBuffer ={
     val coordString: String = coordToStr(coord)
-    val byteBuffer: ByteBuffer = ByteBuffer.allocate(coordString.length * 8)
-    (coordString.chars().asLongStream().map(c => c * saveEncoding).toArray
-      foldLeft byteBuffer) ((buffer, long) => buffer.putLong(long)).flip()
+    strToByteBuffer(coordString)
   }
   
   def bytesToStr(bytes: Array[Byte]): String = {
@@ -101,7 +103,7 @@ object Serializer {
     @tailrec
     def buildMoveHistory(coordList: List[String], history: List[Coord]): List[Coord] = {
       coordList match {
-        case List(_) => history
+        case Nil => history
         case coord::tail =>
           val split = coord.split(",")
           buildMoveHistory(tail, history :+ (split(0).toInt,split(1).toInt))
@@ -118,6 +120,7 @@ object Serializer {
       .split("\n").toList
 
     val (historyLine, gs) = buildGameState(linesList)
+    val list = historyLine.split(";")
     val history = buildMoveHistory(historyLine.split(";").toList, Nil)
 
     Container(gs, history, ps, c.newGameSettings)

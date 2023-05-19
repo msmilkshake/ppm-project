@@ -58,7 +58,7 @@ class SettingsWindow {
     confirmation.setHeaderText("Are you sure you want to delete the autosave?")
     confirmation.showAndWait().get() match {
       case ButtonType.OK =>
-        IOUtils.deleteContinueFile()
+        IOUtils.deleteFileQuiet()
         MainWindow.c = Container(
           GameState(
             None,

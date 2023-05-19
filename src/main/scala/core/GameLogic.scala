@@ -1,18 +1,18 @@
 package core
 
-import io.{IOUtils, Serializer}
 import core.Board.Board
 import core.Cells.{Blue, Cell, Empty, Red}
 import core.Coord.Coord
-import core.Difficulty.{Difficulty, Easy, Medium}
-import core.ProgramState.{GameWon, InMainMenu, ProgramState, SaveGame, UndoMove}
+import core.Difficulty.{Easy, Medium}
+import core.ProgramState.{GameWon, ProgramState}
+import io.IOUtils
 import tui.Container
 
 import scala.annotation.tailrec
 
 
 object GameLogic {
-  
+
   type MoveFunction = GameState => (Option[Coord], Option[ProgramState], RandomWithState)
 
   val adjacency: List[Coord] = List(
@@ -127,7 +127,7 @@ object GameLogic {
           )
           case _ => Container(
             gs2,
-            (cRow,cCol)::(pRow,pCol) :: c.playHistory,
+            (cRow, cCol) :: (pRow, pCol) :: c.playHistory,
             c.programState,
             c.newGameSettings)
         }
@@ -151,73 +151,46 @@ object GameLogic {
 
   def hasContiguousLine(b: Board, c: Cell): Boolean = {
 
-    @tailrec
-    def buildStartLine(b: Board, c: Cell, i: Int, res: List[Coord]): List[Coord] = {
-      i match {
-        case 0 => res
-        case _ =>
-          c match {
-            case Red => buildStartLine(b, c, i - 1, (i - 1, 0) :: res)
-            case Blue => buildStartLine(b, c, i - 1, (0, i - 1) :: res)
-          }
-      }
-    }
-
-    def checkStartLine(b: Board, c: Cell, i: Int, res: List[Coord]): Boolean = {
+    def checkBorderPositions(b: Board, c: Cell, i: Int): Boolean = {
       i match {
         case 0 => false
         case _ =>
-          c match {
-            case Red => buildStartLine(b, c, i - 1, (i - 1, 0) :: res)
-            case Blue => buildStartLine(b, c, i - 1, (0, i - 1) :: res)
+          val isWinPath = c match {
+            case Red =>
+              checkBorderCellAdjacents(b, c, List((b.length - i, 0)), Set())
+            case Blue =>
+              checkBorderCellAdjacents(b, c, List((0, b.length - i)), Set())
           }
+          isWinPath || checkBorderPositions(b, c, i - 1)
       }
     }
 
     @tailrec
-    def winnerPath(b: Board, c: Cell, path: List[Coord]): Boolean = {
-      path match {
-        case Nil => false
-        case (_, col) :: _ if col == b.length - 1 && c == Red => true
-        case (row, _) :: _ if row == b.length - 1 && c == Blue => true
-        case _ :: tail => winnerPath(b, c, tail)
-      }
-    }
-
-    @tailrec
-    def checkAjacentCells(b: Board, c: Cell, p: Coord, s: Set[Coord],
-                          adj: List[Coord], res: List[Coord]): (List[Coord], Set[Coord]) = {
-      adj match {
-        case Nil => (res, s)
-        case (rowOffset, colOffset) :: tail =>
-          val (row, col) = (p._1 + rowOffset, p._2 + colOffset)
-          if (row < 0 || row >= b.length || col < 0 || col >= b.length) {
-            checkAjacentCells(b, c, p, s, tail, res)
-          } else {
-            b(row)(col) match {
-              case cell if cell == c && !s.contains((row, col)) =>
-                checkAjacentCells(b, cell, p, s + ((row, col)), tail, (row, col) :: res)
-              case _ => checkAjacentCells(b, c, p, s, tail, res)
-            }
-          }
-      }
-    }
-
-    @tailrec
-    def buildAdjacencyList(b: Board, c: Cell, toCheck: List[Coord],
-                           set: Set[Coord]): List[Coord] = {
+    def checkBorderCellAdjacents(b: Board, c: Cell, toCheck: List[Coord],
+                                 set: Set[Coord]): Boolean = {
       toCheck match {
-        case Nil => set.toList
-        case pos :: posTail if b(pos._1)(pos._2) == c =>
-          val (adj, newSet) = checkAjacentCells(b, c, pos, set + pos, adjacency, Nil)
-          buildAdjacencyList(b, c, posTail ++ adj, newSet)
-        case _ :: posTail => buildAdjacencyList(b, c, posTail, set)
+        case Nil => false
+        case (row, col) :: toCheckTail if b(row)(col) == c && !set.contains(row, col) =>
+          c match {
+            case Red if col == b.length - 1 => true
+            case Blue if row == b.length - 1 => true
+            case _ =>
+              val uncheckedAdjacents = (getAdjacents(b, c, (row, col))
+                foldLeft List[Coord]())((list, coord) =>
+                if (!set.contains(coord)) {
+                  coord :: list
+                } else {
+                  list
+                })
+              val coord = (row, col)
+              checkBorderCellAdjacents(b, c, toCheckTail ++ uncheckedAdjacents, set + coord)
+          }
+        case _ :: toCheckTail =>
+          checkBorderCellAdjacents(b, c, toCheckTail, set)
       }
     }
 
-    (buildStartLine(b, c, b.length, Nil) foldRight false)(
-      (coord, result) => result ||
-          winnerPath(b, c, buildAdjacencyList(b, c, List(coord), Set())))
+    checkBorderPositions(b, c, b.length)
   }
 
   def getAdjacents(board: Board, cell: Cell, pos: Coord): List[Coord] = {

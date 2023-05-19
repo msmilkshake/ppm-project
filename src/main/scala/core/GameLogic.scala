@@ -12,7 +12,7 @@ import scala.annotation.tailrec
 
 
 object GameLogic {
-  
+
   type MoveFunction = GameState => (Option[Coord], Option[ProgramState], RandomWithState)
 
   val adjacency: List[Coord] = List(
@@ -127,7 +127,7 @@ object GameLogic {
           )
           case _ => Container(
             gs2,
-            (cRow,cCol)::(pRow,pCol) :: c.playHistory,
+            (cRow, cCol) :: (pRow, pCol) :: c.playHistory,
             c.programState,
             c.newGameSettings)
         }
@@ -141,8 +141,8 @@ object GameLogic {
   }
 
   def getAllCells(board: Board, cell: Cell): List[Coord] = {
-    (board.zipWithIndex foldRight List[Coord]())((row, acc) => {
-      (row._1.zipWithIndex foldRight acc)((col, result) => {
+    (board.zipWithIndex foldRight List[Coord]()) ((row, acc) => {
+      (row._1.zipWithIndex foldRight acc) ((col, result) => {
         if (col._1 == cell) (row._2, col._2) :: result
         else result
       })
@@ -168,9 +168,51 @@ object GameLogic {
         case 0 => false
         case _ =>
           c match {
-            case Red => buildStartLine(b, c, i - 1, (i - 1, 0) :: res)
-            case Blue => buildStartLine(b, c, i - 1, (0, i - 1) :: res)
+            case Red => checkLast(b, c, adjacency)
+            case Blue => checkLast(b, c, adjacency)
           }
+      }
+    }
+
+    def checkBorderPositions(b: Board, c: Cell, i: Int, win: Boolean): Boolean = {
+      win match {
+        case true => true
+        case false =>
+          i match {
+            case 0 => false
+            case i if b(i - 1)(0) == c && c == Red => checkBorderCellsAdj(b, c, List((i - 1, 0)), Set[Coord]())
+            case i if b(0)(i - 1) == c && c == Blue => checkBorderCellsAdj(b, c, List((0, i - 1)), Set[Coord]())
+            case _ => checkBorderPositions(b, c, i - 1, false)
+          }
+      }
+    }
+
+
+    def checkBorderCellsAdj(b: Board, c: Cell, coords: List[Coord], s: Set[Coord]): Boolean = {
+      coords match {
+        case Nil => false
+        case (_, col) :: tail if col == b.length - 1 && c == Red => true
+        case (row, _) :: tail if row == b.length - 1 && c == Blue => true
+        case (row, col) :: tail =>
+          val pos = (row, col)
+          val lst = getAdjacents(b, c, pos)
+          val newCoords = (lst foldRight List[Coord]()) ((coord, lst) =>
+            if (!s.contains(coord)) {
+              coord :: lst
+            } else {
+              lst
+            })
+          checkBorderCellsAdj(b, c, newCoords ++ tail, s + pos)
+      }
+    }
+
+
+    def checkLast(b: Board, c: Cell, lst: List[Coord]): Boolean = {
+      lst match {
+        case Nil => false
+        case (_, col) :: _ if col == b.length - 1 && c == Red => true
+        case (row, _) :: _ if row == b.length - 1 && c == Blue => true
+        case _ :: tail => checkLast(b, c, tail)
       }
     }
 
@@ -215,9 +257,11 @@ object GameLogic {
       }
     }
 
-    (buildStartLine(b, c, b.length, Nil) foldRight false)(
-      (coord, result) => result ||
-          winnerPath(b, c, buildAdjacencyList(b, c, List(coord), Set())))
+    checkBorderPositions(b, c, b.length,false)
+
+//    (buildStartLine(b, c, b.length, Nil) foldRight false) (
+//      (coord, result) => result ||
+//        winnerPath(b, c, buildAdjacencyList(b, c, List(coord), Set())))
   }
 
   def getAdjacents(board: Board, cell: Cell, pos: Coord): List[Coord] = {

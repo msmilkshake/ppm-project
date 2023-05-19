@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GameWindow">
-  <columnConstraints>
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="52.0" minHeight="52.0" prefHeight="52.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <GridPane fx:id="containerPane">
+      <GridPane fx:id="containerPane" styleClass="pane">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="0" />
@@ -25,16 +29,16 @@
           <RowConstraints minHeight="0.0" prefHeight="0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <AnchorPane maxHeight="35.0" maxWidth="-Infinity" minHeight="35.0" minWidth="-Infinity" prefHeight="35.0" GridPane.rowIndex="1">
+      <AnchorPane maxHeight="52.0" maxWidth="-Infinity" minHeight="52.0" minWidth="-Infinity" prefHeight="52.0" styleClass="pane-bordered" GridPane.rowIndex="1">
          <children>
-            <HBox prefHeight="100.0" spacing="20.0">
+            <HBox alignment="CENTER" prefHeight="52.0" spacing="20.0">
                <children>
-                  <Button fx:id="btnUndo" mnemonicParsing="false" onMouseClicked="#btnUndoOnClicked" prefWidth="70.0" text="Undo">
+                  <Button fx:id="btnUndo" mnemonicParsing="false" onMouseClicked="#btnUndoOnClicked" prefWidth="70.0" styleClass="button" text="Undo">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin></Button>
-                  <Button fx:id="btnSave" mnemonicParsing="false" onMouseClicked="#btnSaveOnClicked" prefWidth="100.0" text="Save Game" />
-                  <Button fx:id="btnBack" mnemonicParsing="false" onMouseClicked="#btnBackOnClicked" prefWidth="70.0" text="Back">
+                  <Button fx:id="btnSave" mnemonicParsing="false" onMouseClicked="#btnSaveOnClicked" prefWidth="100.0" styleClass="button" text="Save Game" />
+                  <Button fx:id="btnBack" mnemonicParsing="false" onMouseClicked="#btnBackOnClicked" prefWidth="70.0" styleClass="button" text="Back">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin></Button>

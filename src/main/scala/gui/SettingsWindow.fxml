@@ -50,7 +50,7 @@
                <font>
                   <Font name="System Bold" size="14.0" />
                </font></Label>
-            <Label text="(Must be between 4 and 25)" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
+            <Label text="(Must be between 4 and 20)" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
             <TextField fx:id="txtBoardLength" maxWidth="60.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
             <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
             <Label text="Erase Auto-Save" GridPane.columnSpan="2147483647" GridPane.rowIndex="8">

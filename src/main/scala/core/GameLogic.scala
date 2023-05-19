@@ -151,18 +151,24 @@ object GameLogic {
 
   def hasContiguousLine(b: Board, c: Cell): Boolean = {
 
-    def checkBorderPositions(b: Board, c: Cell, i: Int): Boolean = {
-      i match {
-        case 0 => false
+    @tailrec
+    def checkBorderPositions(b: Board, c: Cell, i: Int, win: Boolean): Boolean = {
+      win match {
+        case true => true
         case _ =>
-          val isWinPath = c match {
-            case Red =>
-              checkBorderCellAdjacents(b, c, List((b.length - i, 0)), Set())
-            case Blue =>
-              checkBorderCellAdjacents(b, c, List((0, b.length - i)), Set())
+          i match {
+            case 0 => false
+            case _ =>
+              val isWinPath = c match {
+                case Red =>
+                  checkBorderCellAdjacents(b, c, List((b.length - i, 0)), Set())
+                case Blue =>
+                  checkBorderCellAdjacents(b, c, List((0, b.length - i)), Set())
+              }
+              checkBorderPositions(b, c, i - 1, isWinPath)
           }
-          isWinPath || checkBorderPositions(b, c, i - 1)
       }
+      
     }
 
     @tailrec
@@ -170,7 +176,7 @@ object GameLogic {
                                  set: Set[Coord]): Boolean = {
       toCheck match {
         case Nil => false
-        case (row, col) :: toCheckTail if b(row)(col) == c && !set.contains(row, col) =>
+        case (row, col) :: remainingToCheck if b(row)(col) == c && !set.contains(row, col) =>
           c match {
             case Red if col == b.length - 1 => true
             case Blue if row == b.length - 1 => true
@@ -183,14 +189,14 @@ object GameLogic {
                   list
                 })
               val coord = (row, col)
-              checkBorderCellAdjacents(b, c, toCheckTail ++ uncheckedAdjacents, set + coord)
+              checkBorderCellAdjacents(b, c, remainingToCheck ++ uncheckedAdjacents, set + coord)
           }
         case _ :: toCheckTail =>
           checkBorderCellAdjacents(b, c, toCheckTail, set)
       }
     }
 
-    checkBorderPositions(b, c, b.length)
+    checkBorderPositions(b, c, b.length, false)
   }
 
   def getAdjacents(board: Board, cell: Cell, pos: Coord): List[Coord] = {

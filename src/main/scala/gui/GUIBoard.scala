@@ -109,38 +109,39 @@ object GUIBoard {
                   MainWindow.c.programState,
                   MainWindow.c.newGameSettings)
                 GameWindow.instance.gameWon()
-              }
-              val gs1 = GameState(
-                Some(b1),
-                s.difficulty,
-                s.random,
-                None)
-              val (Some((cRow, cCol)), _, rand) = GameLogic.doMove(gs1, GameLogic.computerMove(gs1))
-              val b2 = GameLogic.setBoardCell(gs1.board.get, Blue, cRow, cCol)
-              val gs2 = GameState(
-                Some(b2),
-                s.difficulty,
-                rand,
-                None)
-              GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.DODGERBLUE)
-              if (GameLogic.hasContiguousLine(gs2.board.get, Blue)) {
-                MainWindow.c = Container(
-                  GameState(
-                    None,
-                    MainWindow.c.newGameSettings.difficulty,
-                    MainWindow.c.gameState.random,
-                    Some(Blue)),
-                  Nil,
+              } else {
+                val gs1 = GameState(
+                  Some(b1),
+                  s.difficulty,
+                  s.random,
+                  None)
+                val (Some((cRow, cCol)), _, rand) = GameLogic.doMove(gs1, GameLogic.computerMove(gs1))
+                val b2 = GameLogic.setBoardCell(gs1.board.get, Blue, cRow, cCol)
+                val gs2 = GameState(
+                  Some(b2),
+                  s.difficulty,
+                  rand,
+                  None)
+                GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.DODGERBLUE)
+                if (GameLogic.hasContiguousLine(gs2.board.get, Blue)) {
+                  MainWindow.c = Container(
+                    GameState(
+                      None,
+                      MainWindow.c.newGameSettings.difficulty,
+                      MainWindow.c.gameState.random,
+                      Some(Blue)),
+                    Nil,
+                    MainWindow.c.programState,
+                    MainWindow.c.newGameSettings)
+                  GameWindow.instance.gameWon()
+                }
+                val c: Container = Container(gs2,
+                  (cRow, cCol) :: (pRow, pCol) :: MainWindow.c.playHistory,
                   MainWindow.c.programState,
-                  MainWindow.c.newGameSettings)
-                GameWindow.instance.gameWon()
+                  MainWindow.c.newGameSettings
+                )
+                MainWindow.c = c
               }
-              val c: Container = Container(gs2,
-                (cRow, cCol) :: (pRow, pCol) :: MainWindow.c.playHistory,
-                MainWindow.c.programState,
-                MainWindow.c.newGameSettings
-              )
-              MainWindow.c = c
             }
           })
           b.getChildren.add(hexagon)

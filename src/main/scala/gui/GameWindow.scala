@@ -2,6 +2,7 @@ package gui
 
 import core.Cells.Empty
 import core.{GameLogic, GameState}
+import io.IOUtils
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.Button
 import javafx.scene.paint.Color
@@ -75,6 +76,17 @@ class GameWindow {
     popupStage.initOwner(btnUndo.getScene.getWindow)
     GameWonPopup.instance.setStage(popupStage)
     popupStage.showAndWait()
+    IOUtils.deleteContinueFileQuiet()
+    MainWindow.c = Container(
+      GameState(
+        None,
+        MainWindow.c.newGameSettings.difficulty,
+        MainWindow.c.gameState.random,
+        None),
+      Nil,
+      MainWindow.c.programState,
+      MainWindow.c.newGameSettings
+    )
     btnBackOnClicked()
   }
 

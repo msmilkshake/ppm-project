@@ -7,7 +7,7 @@ import javafx.fxml.FXML
 import javafx.scene.control._
 import tui.Container
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 class SettingsWindow {
 
@@ -58,7 +58,7 @@ class SettingsWindow {
     confirmation.setHeaderText("Are you sure you want to delete the autosave?")
     confirmation.showAndWait().get() match {
       case ButtonType.OK =>
-        IOUtils.deleteFileQuiet()
+        IOUtils.deleteContinueFileQuiet()
         MainWindow.c = Container(
           GameState(
             None,
@@ -93,7 +93,7 @@ class SettingsWindow {
 
   def validateSettings(): Boolean = {
     Try(txtBoardLength.getText.toInt) match {
-      case Success(value) =>
+      case Success(value) if value >= 4 && value <= 20 =>
         MainWindow.c = Container(
           MainWindow.c.gameState,
           MainWindow.c.playHistory,
@@ -106,10 +106,10 @@ class SettingsWindow {
         )
         true
 
-      case Failure(_) =>
+      case _ =>
         val alert = new Alert(Alert.AlertType.INFORMATION)
         alert.setTitle("Invalid Board Length")
-        alert.setHeaderText("The length of the board must be between 4 and 25.")
+        alert.setHeaderText("The length of the board must be between 4 and 20.")
 
         val okButton = alert.getDialogPane.lookupButton(ButtonType.OK).asInstanceOf[Button]
         okButton.setPrefWidth(60)

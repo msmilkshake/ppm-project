@@ -94,7 +94,7 @@ object HexTUI extends App {
         BoardPrinter.printBoard(c.gameState.board.get)
         IOUtils.displayWinner(c.gameState.winner.get)
         val nextState = IOUtils.promptEndGameOption()
-        IOUtils.deleteFileQuiet()
+        IOUtils.deleteContinueFileQuiet()
 
         mainLoop(Container(
           GameState(None,

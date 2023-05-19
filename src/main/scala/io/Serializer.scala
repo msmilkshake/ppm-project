@@ -19,13 +19,13 @@ object Serializer {
 
   // Just a BIG prime number to scramble the string saved as binary
   val saveEncoding = 0xCF17F32C9F7L
-  
+
 
   def serializeContainer(c: Container, file: String): Unit = {
     new File(f"${IOUtils.saveFolderPath}/last").mkdirs()
     val channel: FileChannel =
       FileChannel.open(Paths.get(f"${IOUtils.saveFolderPath}$file.sav"),
-      StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+        StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     channel.write(stateToByteBuffer(c.gameState))
     c.playHistory map (coord => channel.write(coordToByteBuffer(coord)))
     channel.close()
@@ -34,13 +34,13 @@ object Serializer {
   def saveGameAuto(c: Container): Unit = {
     serializeContainer(c, IOUtils.continuePath)
   }
-  
+
   def saveGame(c: Container): Unit = {
     val saveName = IOUtils.promtSaveFilename()
     serializeContainer(c, saveName)
     IOUtils.displaySaveSuccess(saveName)
   }
-  
+
   def strToByteBuffer(str: String): ByteBuffer = {
     val byteBuffer: ByteBuffer = ByteBuffer.allocate(str.length * 8)
     (str.chars().asLongStream().map(c => c * saveEncoding).toArray
@@ -52,18 +52,18 @@ object Serializer {
     strToByteBuffer(stateString)
   }
 
-  def coordToByteBuffer(coord: Coord): ByteBuffer ={
+  def coordToByteBuffer(coord: Coord): ByteBuffer = {
     val coordString: String = coordToStr(coord)
     strToByteBuffer(coordString)
   }
-  
+
   def bytesToStr(bytes: Array[Byte]): String = {
     val longs: List[Long] = (bytes.grouped(8) map
       (group => ByteBuffer.wrap(group).getLong())).toList
-    
+
     (longs foldLeft "")((a, b) => f"$a${(b / saveEncoding).toChar}")
   }
-  
+
 
   def stateToStr(gs: GameState): String = {
     val header = f"${
@@ -93,7 +93,7 @@ object Serializer {
       f"$strLine\n"
     })
   }
-  
+
   def getLastSavedGame(c: Container): Container = {
     getSavedGame(f"${IOUtils.saveFolderPath}${IOUtils.continuePath}", c, InMainMenu)
   }
@@ -104,9 +104,10 @@ object Serializer {
     def buildMoveHistory(coordList: List[String], history: List[Coord]): List[Coord] = {
       coordList match {
         case Nil => history
-        case coord::tail =>
+        case blank :: _ if blank.isEmpty => Nil
+        case coord :: tail =>
           val split = coord.split(",")
-          buildMoveHistory(tail, history :+ (split(0).toInt,split(1).toInt))
+          buildMoveHistory(tail, history :+ (split(0).toInt, split(1).toInt))
       }
     }
 
@@ -120,7 +121,6 @@ object Serializer {
       .split("\n").toList
 
     val (historyLine, gs) = buildGameState(linesList)
-    val list = historyLine.split(";")
     val history = buildMoveHistory(historyLine.split(";").toList, Nil)
 
     Container(gs, history, ps, c.newGameSettings)
@@ -128,10 +128,11 @@ object Serializer {
 
 
   @tailrec
-  def getBoardStrings(content: List[String], lst: List[String]): (String,List[String]) = {
+  def getBoardStrings(content: List[String], lst: List[String]): (String, List[String]) = {
     content match {
       case separator :: tail if separator isBlank => (tail.head, lst)
       case line :: tail => getBoardStrings(tail, lst :+ line)
+      case Nil => ("", lst)
     }
   }
 

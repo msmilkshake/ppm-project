@@ -1,66 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane minHeight="360.0" minWidth="400.0" prefHeight="400.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainWindow">
-   <children>
-      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+<GridPane minHeight="520.0" minWidth="400.0" prefHeight="400.0" prefWidth="360.0" styleClass="pane" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainWindow">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <children>
+      <GridPane styleClass="pane" GridPane.columnIndex="1" GridPane.rowIndex="2">
         <columnConstraints>
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints fillHeight="false" minHeight="40.0" valignment="CENTER" vgrow="SOMETIMES" />
+          <RowConstraints fillHeight="false" minHeight="40.0" vgrow="SOMETIMES" />
+          <RowConstraints fillHeight="false" minHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="40.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="btnStart" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnPlayOnClicked" text="Start New Game" GridPane.rowIndex="1" />
-            <Button fx:id="btnContinue" layoutX="35.0" layoutY="15.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnContinueOnClicked" text="Continue Game" />
-            <Button fx:id="btnLoad" layoutX="35.0" layoutY="19.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnLoadOnClicked" text="Load Game" GridPane.rowIndex="2" />
-            <Button fx:id="btnSettings" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnSettingsOnClicked" text="Game Settings" GridPane.rowIndex="3" />
-            <Button fx:id="btnQuit" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnQuitOnClicked" text="Quit Game" GridPane.rowIndex="4" />
+            <Button fx:id="btnStart" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnPlayOnClicked" styleClass="button" text="Start New Game" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
+            <Button fx:id="btnContinue" layoutX="35.0" layoutY="15.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnContinueOnClicked" styleClass="button" text="Continue Game" />
+            <Button fx:id="btnLoad" layoutX="35.0" layoutY="19.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnLoadOnClicked" styleClass="button" text="Load Game" GridPane.rowIndex="2">
+               <padding>
+                  <Insets top="6.0" />
+               </padding></Button>
+            <Button fx:id="btnSettings" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnSettingsOnClicked" styleClass="button" text="Game Settings" GridPane.rowIndex="3">
+               <padding>
+                  <Insets top="6.0" />
+               </padding></Button>
+            <Button fx:id="btnQuit" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnQuitOnClicked" styleClass="button" text="Quit Game" GridPane.rowIndex="4">
+               <padding>
+                  <Insets top="6.0" />
+               </padding></Button>
          </children>
+         <GridPane.margin>
+            <Insets bottom="20.0" />
+         </GridPane.margin>
       </GridPane>
       <Label text="Hex Game" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
          <font>
             <Font size="28.0" />
          </font>
+         <padding>
+            <Insets bottom="20.0" />
+         </padding>
       </Label>
-      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <GridPane styleClass="pane-bordered" GridPane.columnIndex="1" GridPane.rowIndex="3">
         <columnConstraints>
-          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="22.0" prefHeight="22.0" valignment="CENTER" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="22.0" prefHeight="22.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Current game settings:" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
-            <Label text="Board length:" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets right="5.0" />
-               </GridPane.margin></Label>
-            <Label fx:id="lblLength" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin></Label>
-            <Label layoutX="33.0" layoutY="52.0" text="Game difficulty:" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets right="5.0" />
-               </GridPane.margin>
-            </Label>
-            <Label fx:id="lblDifficulty" layoutX="115.0" layoutY="52.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </Label>
+            <HBox alignment="BASELINE_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.valignment="CENTER">
+               <children>
+                  <Label text="Board length:" />
+                  <Label fx:id="lblLength" text="Label">
+                     <padding>
+                        <Insets left="8.0" />
+                     </padding></Label>
+               </children>
+            </HBox>
+            <HBox alignment="BASELINE_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+               <children>
+                  <Label text="Game difficulty:" />
+                  <Label fx:id="lblDifficulty" text="Label">
+                     <padding>
+                        <Insets left="8.0" />
+                     </padding></Label>
+               </children>
+            </HBox>
          </children>
          <GridPane.margin>
             <Insets />
@@ -75,7 +97,7 @@
    <rowConstraints>
       <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
       <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" />
-      <RowConstraints minHeight="160.0" prefHeight="160.0" />
+      <RowConstraints />
       <RowConstraints minHeight="70.0" prefHeight="70.0" />
       <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="ALWAYS" />
 

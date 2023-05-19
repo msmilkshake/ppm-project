@@ -203,7 +203,7 @@ object IOUtils {
     }
   }
   
-  def deleteFileQuiet(): Unit = {
+  def deleteContinueFileQuiet(): Unit = {
     new File(f"$saveFolderPath$continuePath.sav").delete()
   }
 

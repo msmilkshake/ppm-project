@@ -1,5 +1,6 @@
 package gui
 
+import gui.Program.container
 import io.Serializer
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, TextField}
@@ -17,7 +18,6 @@ class SavePopup {
 
   SavePopup.instance = this
 
-
   @FXML
   def initialize(): Unit = {
     txtSave.focusedProperty().addListener((_, _, isFocused) =>
@@ -31,7 +31,7 @@ class SavePopup {
   def btnSaveOnClicked(): Unit = {
     txtSave.getText.matches("\\w+[\\s\\w]*") match {
       case true =>
-        Serializer.serializeContainer(MainWindow.c, txtSave.getText)
+        Serializer.serializeContainer(container, txtSave.getText)
         close()
       case false =>
         lblInvalid.setText("Invalid save filename.")
@@ -49,5 +49,7 @@ class SavePopup {
 }
 
 object SavePopup {
+
   var instance: SavePopup = _
+  
 }

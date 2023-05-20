@@ -5,7 +5,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, TextField}
 
 class LoadPopup {
-  
+
   @FXML
   var lblInvalid: Label = _
   @FXML
@@ -14,11 +14,11 @@ class LoadPopup {
   var btnLoad: Button = _
   @FXML
   var btnCancel: Button = _
-  
+
   LoadPopup.instance = this
-  
+
   var filename: Option[String] = None
-  
+
   @FXML
   def initialize(): Unit = {
     txtSave.focusedProperty().addListener((_, _, isFocused) =>
@@ -28,7 +28,7 @@ class LoadPopup {
         case false =>
       })
   }
-  
+
   def btnLoadOnClicked(): Unit = {
     filename = Some(txtSave.getText)
     IOUtils.checkSaveExists(filename.get) match {
@@ -39,11 +39,11 @@ class LoadPopup {
         close()
     }
   }
-  
+
   def btnCancelOnClicked(): Unit = {
     close()
   }
-  
+
   def close(): Unit = {
     btnCancel.getScene.getWindow.hide()
   }
@@ -51,5 +51,7 @@ class LoadPopup {
 }
 
 object LoadPopup {
+
   var instance: LoadPopup = _
+  
 }

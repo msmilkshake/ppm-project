@@ -1,12 +1,10 @@
 package gui
 
 import core.Board.Board
-import core.Cells.{Blue, Empty, Red}
-import core.{GameLogic, GameState}
+import core.Cells.{Blue, Red}
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.{Polygon, StrokeLineCap, StrokeLineJoin}
-import tui.Container
 
 import scala.annotation.tailrec
 
@@ -92,58 +90,7 @@ object GUIBoard {
           hexagon.setStrokeLineCap(StrokeLineCap.ROUND)
           hexagon.setStrokeLineJoin(StrokeLineJoin.ROUND)
           hexagon.setStrokeWidth(3.0)
-          hexagon.setOnMouseClicked(_ => {
-            val s: GameState = MainWindow.c.gameState
-            val (pRow, pCol) = (size - i, size - j)
-            if (s.board.get(pRow)(pCol) == Empty) {
-              val b1: Board = GameLogic.setBoardCell(s.board.get, Red, pRow, pCol)
-              hexagon.setFill(Color.RED)
-              if (GameLogic.hasContiguousLine(b1, Red)) {
-                MainWindow.c = Container(
-                  GameState(
-                    None,
-                    MainWindow.c.newGameSettings.difficulty,
-                    MainWindow.c.gameState.random,
-                    Some(Red)),
-                  Nil,
-                  MainWindow.c.programState,
-                  MainWindow.c.newGameSettings)
-                GameWindow.instance.gameWon()
-              } else {
-                val gs1 = GameState(
-                  Some(b1),
-                  s.difficulty,
-                  s.random,
-                  None)
-                val (Some((cRow, cCol)), _, rand) = GameLogic.doMove(gs1, GameLogic.computerMove(gs1))
-                val b2 = GameLogic.setBoardCell(gs1.board.get, Blue, cRow, cCol)
-                val gs2 = GameState(
-                  Some(b2),
-                  s.difficulty,
-                  rand,
-                  None)
-                GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.DODGERBLUE)
-                if (GameLogic.hasContiguousLine(gs2.board.get, Blue)) {
-                  MainWindow.c = Container(
-                    GameState(
-                      None,
-                      MainWindow.c.newGameSettings.difficulty,
-                      MainWindow.c.gameState.random,
-                      Some(Blue)),
-                    Nil,
-                    MainWindow.c.programState,
-                    MainWindow.c.newGameSettings)
-                  GameWindow.instance.gameWon()
-                }
-                val c: Container = Container(gs2,
-                  (cRow, cCol) :: (pRow, pCol) :: MainWindow.c.playHistory,
-                  MainWindow.c.programState,
-                  MainWindow.c.newGameSettings
-                )
-                MainWindow.c = c
-              }
-            }
-          })
+          hexagon.configureButton(size, size - i, size - j)
           b.getChildren.add(hexagon)
           b.xOffset += b.h * 2
           intiRow(hexagon :: row, i, j - 1)
@@ -164,18 +111,17 @@ object GUIBoard {
   }
 
 
-  def initHexagons(instance: GUIBoard, board: Board) = {
+  def initHexagons(b: GUIBoard, board: Board) = {
     board.zipWithIndex map {
       case (cells, i) => cells.zipWithIndex map {
         case (cell, j) =>
           cell match {
-            case Red => instance.grid(board.length - i - 1)(board.length - j - 1).setFill(Color.RED)
-            case Blue => instance.grid(board.length - i - 1)(board.length - j - 1).setFill(Color.DODGERBLUE)
+            case Red => b.grid(board.length - i - 1)(board.length - j - 1).setFill(Color.RED)
+            case Blue => b.grid(board.length - i - 1)(board.length - j - 1).setFill(Color.DODGERBLUE)
             case _ =>
           }
       }
     }
   }
-
 
 }

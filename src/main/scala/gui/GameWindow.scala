@@ -2,6 +2,7 @@ package gui
 
 import core.Cells.Empty
 import core.{GameLogic, GameState}
+import gui.Program.container
 import io.IOUtils
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.Button
@@ -29,26 +30,26 @@ class GameWindow {
   GameWindow.instance = this
 
   def btnUndoOnClicked(): Unit = {
-    val size = MainWindow.c.gameState.board.get.length
-    MainWindow.c.playHistory match {
+    val size = container.gameState.board.get.length
+    container.playHistory match {
       case Nil =>
       case (cRow, cCol) :: (pRow, pCol) :: tail =>
         GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.LIGHTGRAY)
-        GameWindow.uiBoard.grid(size - pRow - 1)(size - pCol- 1).setFill(Color.LIGHTGRAY)
-        val b1 = GameLogic.setBoardCell(MainWindow.c.gameState.board.get, Empty, pRow, pCol)
-        MainWindow.c = Container(
+        GameWindow.uiBoard.grid(size - pRow - 1)(size - pCol - 1).setFill(Color.LIGHTGRAY)
+        val b1 = GameLogic.setBoardCell(container.gameState.board.get, Empty, pRow, pCol)
+        container = Container(
           GameState(
             Some(GameLogic.setBoardCell(b1, Empty, cRow, cCol)),
-            MainWindow.c.gameState.difficulty,
-            MainWindow.c.gameState.random,
-            MainWindow.c.gameState.winner),
+            container.gameState.difficulty,
+            container.gameState.random,
+            container.gameState.winner),
           tail,
-          MainWindow.c.programState,
-          MainWindow.c.newGameSettings
+          container.programState,
+          container.newGameSettings
         )
     }
   }
-  
+
   def btnSaveOnClicked(): Unit = {
     val popupStage: Stage = new Stage()
     val fxmlLoader = new FXMLLoader(getClass.getResource("SavePopup.fxml"))
@@ -63,9 +64,9 @@ class GameWindow {
   def btnBackOnClicked(): Unit = {
     btnBack.getScene.setRoot(Program.mainViewRoot)
     MainWindow.instance.refreshInfo()
-    MainWindow.setWindowSizeAndCenter(Program.startWinWidth, Program.startWinHeight)
+    Program.setWindowSizeAndCenter(Program.startWinWidth, Program.startWinHeight)
   }
-  
+
   def gameWon(): Unit = {
     val popupStage: Stage = new Stage()
     val fxmlLoader = new FXMLLoader(getClass.getResource("GameWonPopup.fxml"))
@@ -77,15 +78,15 @@ class GameWindow {
     GameWonPopup.instance.setStage(popupStage)
     popupStage.showAndWait()
     IOUtils.deleteContinueFileQuiet()
-    MainWindow.c = Container(
+    container = Container(
       GameState(
         None,
-        MainWindow.c.newGameSettings.difficulty,
-        MainWindow.c.gameState.random,
+        container.newGameSettings.difficulty,
+        container.gameState.random,
         None),
       Nil,
-      MainWindow.c.programState,
-      MainWindow.c.newGameSettings
+      container.programState,
+      container.newGameSettings
     )
     btnBackOnClicked()
   }
@@ -93,6 +94,8 @@ class GameWindow {
 }
 
 object GameWindow {
+
   var instance: GameWindow = _
   var uiBoard: GUIBoard = _
+
 }

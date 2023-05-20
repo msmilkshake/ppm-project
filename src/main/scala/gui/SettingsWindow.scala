@@ -2,6 +2,7 @@ package gui
 
 import core.Difficulty.{Easy, Medium}
 import core.{GameState, Settings}
+import gui.Program.container
 import io.IOUtils
 import javafx.fxml.FXML
 import javafx.scene.control._
@@ -36,42 +37,49 @@ class SettingsWindow {
         case false =>
           txtBoardLength.getText match {
             case blank if blank.isBlank =>
-              txtBoardLength.setText(f"${MainWindow.c.newGameSettings.boardLength}")
+              txtBoardLength.setText(f"${container.newGameSettings.boardLength}")
             case _ =>
           }
       })
   }
 
   def refreshInfo(): Unit = {
-    MainWindow.c.newGameSettings.difficulty match {
+    container.newGameSettings.difficulty match {
       case Easy =>
         rbEasy.fire()
       case Medium =>
         rbMedium.fire()
     }
-    txtBoardLength.setText(f"${MainWindow.c.newGameSettings.boardLength}")
+    txtBoardLength.setText(f"${container.newGameSettings.boardLength}")
   }
 
   def btnEraseAutoSaveOnClicked(): Unit = {
     val confirmation: Alert = new Alert(Alert.AlertType.CONFIRMATION)
+    val dialogPane = confirmation.getDialogPane
+
     confirmation.setTitle("Confirmation")
     confirmation.setHeaderText("Are you sure you want to delete the autosave?")
+
+    dialogPane.getStylesheets.add(getClass.getResource("styles.css").toExternalForm)
+    dialogPane.getStyleClass.add("dialog")
+    val headerLabel = dialogPane.lookup(".header")
+    if (headerLabel != null) headerLabel.getStyleClass.add("dialog")
+
     confirmation.showAndWait().get() match {
       case ButtonType.OK =>
         IOUtils.deleteContinueFileQuiet()
-        MainWindow.c = Container(
+        container = Container(
           GameState(
             None,
-            MainWindow.c.newGameSettings.difficulty,
-            MainWindow.c.gameState.random,
+            container.newGameSettings.difficulty,
+            container.gameState.random,
             None),
           Nil,
-          MainWindow.c.programState,
-          MainWindow.c.newGameSettings
+          container.programState,
+          container.newGameSettings
         )
       case _ =>
     }
-
   }
 
   def btnSaveOnClicked(): Unit = {
@@ -88,16 +96,16 @@ class SettingsWindow {
   def goBack(): Unit = {
     btnDiscard.getScene.setRoot(Program.mainViewRoot)
     MainWindow.instance.refreshInfo()
-    MainWindow.setWindowSizeAndCenter(Program.startWinWidth, Program.startWinHeight)
+    Program.setWindowSizeAndCenter(Program.startWinWidth, Program.startWinHeight)
   }
 
   def validateSettings(): Boolean = {
     Try(txtBoardLength.getText.toInt) match {
       case Success(value) if value >= 4 && value <= 20 =>
-        MainWindow.c = Container(
-          MainWindow.c.gameState,
-          MainWindow.c.playHistory,
-          MainWindow.c.programState,
+        container = Container(
+          container.gameState,
+          container.playHistory,
+          container.programState,
           Settings(value,
             rbEasy.isSelected match {
               case true => Easy
@@ -108,8 +116,16 @@ class SettingsWindow {
 
       case _ =>
         val alert = new Alert(Alert.AlertType.INFORMATION)
+        val dialogPane = alert.getDialogPane
+
         alert.setTitle("Invalid Board Length")
-        alert.setHeaderText("The length of the board must be between 4 and 20.")
+        alert.setHeaderText("You have entered an invalid Board Length")
+        alert.setContentText("The length of the board must be between 4 and 20.")
+
+        dialogPane.getStylesheets.add(getClass.getResource("styles.css").toExternalForm)
+        dialogPane.getStyleClass.add("dialog")
+        val headerLabel = dialogPane.lookup(".header")
+        if (headerLabel != null) headerLabel.getStyleClass.add("dialog")
 
         val okButton = alert.getDialogPane.lookupButton(ButtonType.OK).asInstanceOf[Button]
         okButton.setPrefWidth(60)
@@ -124,5 +140,7 @@ class SettingsWindow {
 }
 
 object SettingsWindow {
+
   var instance: SettingsWindow = _
+
 } 

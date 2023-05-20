@@ -3,13 +3,14 @@ package gui
 import core.Difficulty.Easy
 import core.ProgramState.InMainMenu
 import core.{Board, GameState, MyRandom, Settings}
+import gui.Program.container
 import io.{IOUtils, Serializer}
 import javafx.application.Platform
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.{ColumnConstraints, GridPane, RowConstraints}
+import javafx.scene.layout.{AnchorPane, ColumnConstraints, GridPane, RowConstraints}
 import javafx.scene.{Parent, Scene}
-import javafx.stage.{Modality, Screen, Stage}
+import javafx.stage.{Modality, Stage}
 import tui.Container
 
 class MainWindow {
@@ -37,7 +38,7 @@ class MainWindow {
   val initialState = GameState(None, defaultSettings.difficulty, random, None)
   val defaultContainer = Container(initialState, Nil, InMainMenu, defaultSettings)
 
-  MainWindow.c = IOUtils.checkHasContinue() match {
+  container = IOUtils.checkHasContinue() match {
     case true => Serializer.getLastSavedGame(defaultContainer)
     case _ => defaultContainer
   }
@@ -50,8 +51,8 @@ class MainWindow {
   MainWindow.instance = this
 
   def refreshInfo(): Unit = {
-    updateSettingsLabels(MainWindow.c)
-    MainWindow.c.gameState.board match {
+    updateSettingsLabels(container)
+    container.gameState.board match {
       case Some(_) =>
         btnContinue.setVisible(true)
       case None =>
@@ -66,16 +67,16 @@ class MainWindow {
 
 
   def btnPlayOnClicked(): Unit = {
-    MainWindow.c = Container(
+    container = Container(
       GameState(
-        Some(Board.initBoard(MainWindow.c.newGameSettings.boardLength)),
-        MainWindow.c.newGameSettings.difficulty,
-        MainWindow.c.gameState.random,
-        MainWindow.c.gameState.winner,
+        Some(Board.initBoard(container.newGameSettings.boardLength)),
+        container.newGameSettings.difficulty,
+        container.gameState.random,
+        container.gameState.winner,
       ),
       Nil,
-      MainWindow.c.programState,
-      MainWindow.c.newGameSettings
+      container.programState,
+      container.newGameSettings
     )
     startGame(true)
   }
@@ -94,13 +95,13 @@ class MainWindow {
     popupStage.initOwner(btnLoad.getScene.getWindow)
     popupStage.showAndWait()
     LoadPopup.instance.filename match {
-      case Some(filename) => 
+      case Some(filename) =>
         val path = f"${IOUtils.saveFolderPath}$filename"
-        MainWindow.c = Serializer.getSavedGame(path, MainWindow.c, MainWindow.c.programState)
+        container = Serializer.getSavedGame(path, container, container.programState)
         startGame(false)
       case None =>
     }
-    
+
   }
 
   def btnSettingsOnClicked(): Unit = {
@@ -109,7 +110,15 @@ class MainWindow {
 
     val scene = btnSettings.getScene
     scene.setRoot(settingsWindow)
-    MainWindow.setWindowSizeAndCenter(settingsWindow.getWidth, settingsWindow.getHeight)
+
+    settingsWindow.applyCss()
+    settingsWindow.layout()
+    println(settingsWindow.getWidth)
+    println(settingsWindow.getHeight)
+    println(settingsWindow.getPrefWidth)
+    println(settingsWindow.getPrefHeight)
+
+    Program.setWindowSizeAndCenter(472.0, 492.0)
   }
 
   def btnQuitOnClicked(): Unit = {
@@ -117,9 +126,9 @@ class MainWindow {
   }
 
   def startGame(newGame: Boolean): Unit = {
-    val gameBoard = new GUIBoard(MainWindow.c.gameState.board.get.length)
+    val gameBoard = new GUIBoard(container.gameState.board.get.length)
     if (!newGame) {
-      gameBoard.initHexagons(MainWindow.c.gameState.board.get)
+      gameBoard.initHexagons(container.gameState.board.get)
     }
     gameBoard.setId("gamePane")
     GameWindow.uiBoard = gameBoard
@@ -139,41 +148,33 @@ class MainWindow {
     colConst.setPrefWidth(gameBoard.getWidth)
     colConst.setMaxWidth(gameBoard.getWidth)
 
-    val minWidth = math.max(gameBoard.getWidth, 324)
-    val minHeight = gameBoard.getHeight + 40
-    MainWindow.setWindowSizeAndCenter(minWidth, minHeight)
-
     val scene = btnStart.getScene
     scene.setRoot(gameWindow)
+
+    val buttonPane: AnchorPane = gameWindow.getChildren.get(1).asInstanceOf[AnchorPane]
+
+    gameWindow.applyCss()
+    gameWindow.layout()
+
+    val minWidth = math.max(gameBoard.getWidth, buttonPane.getWidth)
+    val minHeight = gameBoard.getHeight + buttonPane.getHeight
+    Program.setWindowSizeAndCenter(minWidth, minHeight)
+
+
   }
 
   private def finalizeAndExit(): Unit = {
-    IOUtils.saveSeed(MainWindow.c.gameState.random.getSeed())
+    IOUtils.saveSeed(container.gameState.random.getSeed())
     Platform.exit()
   }
 
 }
 
 object MainWindow {
+  
   var instance: MainWindow = _
-  var c: Container = _
 
   var widthWinExtra: Double = 12.0
   var heightWinExtra: Double = 32.0
-
-  def setWindowSizeAndCenter(width: Double, height: Double): Unit = {
-
-    Program.primaryStage.setMinWidth(width + MainWindow.widthWinExtra)
-    Program.primaryStage.setWidth(width + MainWindow.widthWinExtra)
-    Program.primaryStage.setMinHeight(height + MainWindow.heightWinExtra)
-    Program.primaryStage.setHeight(height + MainWindow.heightWinExtra)
-
-    val screenBounds = Screen.getPrimary.getVisualBounds
-    val centerX = screenBounds.getMinX + (screenBounds.getWidth / 2)
-    val centerY = screenBounds.getMinY + (screenBounds.getHeight / 2)
-
-    Program.primaryStage.setX(centerX - (width / 2))
-    Program.primaryStage.setY(centerY - (height / 2))
-  }
 
 }

@@ -95,7 +95,7 @@ class SettingsWindow {
 
   def goBack(): Unit = {
     btnDiscard.getScene.setRoot(Program.mainViewRoot)
-    MainWindow.instance.refreshInfo()
+    MainMenuWindow.instance.refreshInfo()
     Program.setWindowSizeAndCenter(Program.startWinWidth, Program.startWinHeight)
   }
 

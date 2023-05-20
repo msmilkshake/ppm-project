@@ -35,7 +35,7 @@ class GameWindow {
       case Nil =>
       case (cRow, cCol) :: (pRow, pCol) :: tail =>
         GameWindow.uiBoard.grid(size - cRow - 1)(size - cCol - 1).setFill(Color.LIGHTGRAY)
-        GameWindow.uiBoard.grid(size - pRow - 1)(size - pCol - 1).setFill(Color.LIGHTGRAY)
+        GameWindow.uiBoard.grid(size - pRow - 1)(size - pCol- 1).setFill(Color.LIGHTGRAY)
         val b1 = GameLogic.setBoardCell(container.gameState.board.get, Empty, pRow, pCol)
         container = Container(
           GameState(
@@ -49,7 +49,7 @@ class GameWindow {
         )
     }
   }
-
+  
   def btnSaveOnClicked(): Unit = {
     val popupStage: Stage = new Stage()
     val fxmlLoader = new FXMLLoader(getClass.getResource("SavePopup.fxml"))
@@ -63,10 +63,10 @@ class GameWindow {
 
   def btnBackOnClicked(): Unit = {
     btnBack.getScene.setRoot(Program.mainViewRoot)
-    MainWindow.instance.refreshInfo()
+    MainMenuWindow.instance.refreshInfo()
     Program.setWindowSizeAndCenter(Program.startWinWidth, Program.startWinHeight)
   }
-
+  
   def gameWon(): Unit = {
     val popupStage: Stage = new Stage()
     val fxmlLoader = new FXMLLoader(getClass.getResource("GameWonPopup.fxml"))
@@ -94,8 +94,8 @@ class GameWindow {
 }
 
 object GameWindow {
-
+  
   var instance: GameWindow = _
   var uiBoard: GUIBoard = _
-
+  
 }

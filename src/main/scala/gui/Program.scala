@@ -13,7 +13,7 @@ class Program extends Application {
   override def start(primaryStage: Stage): Unit = {
     primaryStage.setTitle("Hex Game")
     Program.primaryStage = primaryStage
-    val fxmlLoader = new FXMLLoader(getClass.getResource("MainWindow.fxml"))
+    val fxmlLoader = new FXMLLoader(getClass.getResource("MainMenuWindow.fxml"))
     Program.mainViewRoot = fxmlLoader.load()
     val scene = new Scene(Program.mainViewRoot)
     primaryStage.setScene(scene)
@@ -44,10 +44,10 @@ object Program {
   var container: Container = _
 
   def setWindowSizeAndCenter(width: Double, height: Double): Unit = {
-    Program.primaryStage.setMinWidth(width + MainWindow.widthWinExtra)
-    Program.primaryStage.setWidth(width + MainWindow.widthWinExtra)
-    Program.primaryStage.setMinHeight(height + MainWindow.heightWinExtra)
-    Program.primaryStage.setHeight(height + MainWindow.heightWinExtra)
+    Program.primaryStage.setMinWidth(width + MainMenuWindow.widthWinExtra)
+    Program.primaryStage.setWidth(width + MainMenuWindow.widthWinExtra)
+    Program.primaryStage.setMinHeight(height + MainMenuWindow.heightWinExtra)
+    Program.primaryStage.setHeight(height + MainMenuWindow.heightWinExtra)
 
     val screenBounds = Screen.getPrimary.getVisualBounds
     val centerX = screenBounds.getMinX + (screenBounds.getWidth / 2)

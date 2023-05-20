@@ -13,7 +13,7 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.{Modality, Stage}
 import tui.Container
 
-class MainWindow {
+class MainMenuWindow {
 
   @FXML
   private var btnStart: Button = _
@@ -48,7 +48,7 @@ class MainWindow {
     refreshInfo()
   }
 
-  MainWindow.instance = this
+  MainMenuWindow.instance = this
 
   def refreshInfo(): Unit = {
     updateSettingsLabels(container)
@@ -170,9 +170,9 @@ class MainWindow {
 
 }
 
-object MainWindow {
+object MainMenuWindow {
   
-  var instance: MainWindow = _
+  var instance: MainMenuWindow = _
 
   var widthWinExtra: Double = 12.0
   var heightWinExtra: Double = 32.0

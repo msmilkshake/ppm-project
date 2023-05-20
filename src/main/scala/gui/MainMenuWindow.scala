@@ -113,10 +113,6 @@ class MainMenuWindow {
 
     settingsWindow.applyCss()
     settingsWindow.layout()
-    println(settingsWindow.getWidth)
-    println(settingsWindow.getHeight)
-    println(settingsWindow.getPrefWidth)
-    println(settingsWindow.getPrefHeight)
 
     Program.setWindowSizeAndCenter(472.0, 492.0)
   }

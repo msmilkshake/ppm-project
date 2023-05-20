@@ -63,8 +63,7 @@ object Serializer {
 
     (longs foldLeft "")((a, b) => f"$a${(b / saveEncoding).toChar}")
   }
-
-
+  
   def stateToStr(gs: GameState): String = {
     val header = f"${
       gs.difficulty match {
@@ -125,8 +124,7 @@ object Serializer {
 
     Container(gs, history, ps, c.newGameSettings)
   }
-
-
+  
   @tailrec
   def getBoardStrings(content: List[String], lst: List[String]): (String, List[String]) = {
     content match {

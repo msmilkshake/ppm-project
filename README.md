@@ -6,6 +6,10 @@ Developed by
 - 100502 - Paulo Filipe
 - 105475 - Tiago Lobo
 
+#### Instructions:
+- To run the **Text User Interface**, run the `main` function of the `tui.HexTUI` class.
+- To run the **Graphic User Interface**, run the `main` function of the `gui.HexGUI` class.
+
 ### Optimal Workshop results:
 
 #### - Tree Testing results link:

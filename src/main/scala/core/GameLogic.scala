@@ -10,7 +10,6 @@ import tui.Container
 
 import scala.annotation.tailrec
 
-
 object GameLogic {
 
   type MoveFunction = GameState => (Option[Coord], Option[ProgramState], RandomWithState)
@@ -168,7 +167,7 @@ object GameLogic {
               checkBorderPositions(b, c, i - 1, isWinPath)
           }
       }
-      
+
     }
 
     @tailrec

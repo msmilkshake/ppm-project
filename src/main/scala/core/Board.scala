@@ -5,7 +5,7 @@ import core.Cells.{Cell, Empty}
 import scala.annotation.tailrec
 
 object Board {
-  
+
   type Board = List[List[Cell]]
 
   def initBoard(len: Int): Board = {

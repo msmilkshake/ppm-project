@@ -5,10 +5,13 @@ import core.Cells.{Blue, Cell, Red}
 import core.Coord.Coord
 import core.ProgramState.{Exit, GameRunning, InMainMenu, ProgramState, SaveGame, UndoMove}
 import core.{Difficulty, Settings}
+import io.Serializer.{bytesToStr, strToByteBuffer}
 import io.StringUtils.{blueString, boldString, greenString, redString}
-import tui.{CommandLineOption, Container}
+import tui.CommandLineOption
 
 import java.io.File
+import java.nio.channels.FileChannel
+import java.nio.file.{Files, Paths, StandardOpenOption}
 import scala.annotation.tailrec
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
@@ -17,6 +20,9 @@ object IOUtils {
 
   val saveFolderPath = "saves/"
   val continuePath = f"last/continue"
+  val seedPath = f"seed"
+  val seedFile = f"val.seed"
+  val defaultSeed = 0xdcb5432
 
   def displaySaveSuccess(saveName: String): Unit = {
     greenString(f"Saved game with name: $saveName successfully.\n")
@@ -180,7 +186,24 @@ object IOUtils {
     }
   }
   
-  def deleteFileQuiet(): Unit = {
+  def saveSeed(seed: Long): Unit = {
+    new File(seedPath).mkdirs()
+    val channel: FileChannel =
+      FileChannel.open(Paths.get(f"$seedPath/$seedFile"),
+        StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+    channel.write(strToByteBuffer(seed.toString))
+    channel.close()
+  }
+
+  def loadSeed(): Long = {
+    val seed = Try(bytesToStr(Files.readAllBytes(Paths.get(f"$seedPath/$seedFile"))).toLong)
+    seed match {
+      case Failure(_) => defaultSeed
+      case Success(value) => value
+    }
+  }
+  
+  def deleteContinueFileQuiet(): Unit = {
     new File(f"$saveFolderPath$continuePath.sav").delete()
   }
 

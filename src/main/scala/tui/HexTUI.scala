@@ -1,18 +1,20 @@
 package tui
 
+import core.Cells.Empty
 import core.Difficulty._
+import core.GameLogic.setBoardCell
 import core.ProgramState._
 import core.{GameLogic, GameState, MyRandom, Settings}
 import io.{BoardPrinter, IOUtils, Serializer}
 
 import scala.annotation.tailrec
 
-object Hex extends App {
+object HexTUI extends App {
 
   val mainMenuTitle = "Main Menu"
   val settingsMenuTitle = "Settings Menu"
 
-  val random = MyRandom(0x54321)
+  val random = MyRandom(IOUtils.loadSeed())
   val boardLen = 5
   val difficulty = Easy
   val initialState = GameState(None, difficulty, random, None)
@@ -58,19 +60,24 @@ object Hex extends App {
         mainLoop(GameLogic.playTurn(c))
 
       case UndoMove =>
-        c.stateHistory match {
+        c.playHistory match {
           case Nil =>
             IOUtils.displayNoUndoMoves()
             mainLoop(Container(
               c.gameState,
-              c.stateHistory,
+              c.playHistory,
               GameRunning,
               c.newGameSettings))
 
-          case lastState :: tail =>
+          case (cRow, cCol) :: (pRow, pCol) :: tail =>
             IOUtils.displayUndoSuccess()
-            mainLoop(Container(
-              lastState,
+            val b1 = setBoardCell(c.gameState.board.get, Empty, cRow, cCol)
+            val b2 = setBoardCell(b1, Empty, pRow, pCol)
+            mainLoop(Container(GameState(
+              Some(b2),
+              c.gameState.difficulty,
+              c.gameState.random,
+              c.gameState.winner),
               tail,
               GameRunning,
               c.newGameSettings))
@@ -79,7 +86,7 @@ object Hex extends App {
       case SaveGame =>
         Serializer.saveGame(c)
         mainLoop(Container(c.gameState,
-          c.stateHistory,
+          c.playHistory,
           GameRunning,
           c.newGameSettings))
 
@@ -87,7 +94,7 @@ object Hex extends App {
         BoardPrinter.printBoard(c.gameState.board.get)
         IOUtils.displayWinner(c.gameState.winner.get)
         val nextState = IOUtils.promptEndGameOption()
-        IOUtils.deleteFileQuiet()
+        IOUtils.deleteContinueFileQuiet()
 
         mainLoop(Container(
           GameState(None,
@@ -98,11 +105,12 @@ object Hex extends App {
           nextState,
           c.newGameSettings))
 
-      case Exit => 
+      case Exit =>
         c.gameState.board match {
           case Some(_) => Serializer.saveGameAuto(c)
           case None =>
         }
+        IOUtils.saveSeed(c.gameState.random.getSeed())
         IOUtils.displayGoodbyeMessage()
     }
   }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane styleClass="main-pane" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainMenuWindow">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <children>
+      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints fillHeight="false" minHeight="44.0" valignment="CENTER" vgrow="SOMETIMES" />
+          <RowConstraints fillHeight="false" minHeight="44.0" vgrow="SOMETIMES" />
+          <RowConstraints fillHeight="false" minHeight="44.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="44.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="44.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="btnStart" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnPlayOnClicked" text="Start New Game" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
+            <Button fx:id="btnContinue" layoutX="35.0" layoutY="15.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnContinueOnClicked" text="Continue Game" />
+            <Button fx:id="btnLoad" layoutX="35.0" layoutY="19.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnLoadOnClicked" text="Load Game" GridPane.rowIndex="2">
+               <padding>
+                  <Insets top="6.0" />
+               </padding></Button>
+            <Button fx:id="btnSettings" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnSettingsOnClicked" text="Game Settings" GridPane.rowIndex="3">
+               <padding>
+                  <Insets top="6.0" />
+               </padding></Button>
+            <Button fx:id="btnQuit" layoutX="35.0" layoutY="102.0" minWidth="150.0" mnemonicParsing="false" onMouseClicked="#btnQuitOnClicked" text="Quit Game" GridPane.rowIndex="4">
+               <padding>
+                  <Insets top="6.0" />
+               </padding></Button>
+         </children>
+         <GridPane.margin>
+            <Insets bottom="20.0" />
+         </GridPane.margin>
+      </GridPane>
+      <Label alignment="CENTER" contentDisplay="CENTER" styleClass="header-label" text="Hex Game" textFill="#a4601c" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Book Antiqua Bold Italic" size="36.0" />
+         </font>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <GridPane.margin>
+            <Insets bottom="40.0" />
+         </GridPane.margin>
+      </Label>
+      <GridPane styleClass="pane-bordered" GridPane.columnIndex="1" GridPane.rowIndex="3">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="22.0" prefHeight="22.0" valignment="CENTER" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="22.0" prefHeight="22.0" valignment="CENTER" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Current game settings:" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
+            <HBox alignment="BASELINE_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" GridPane.valignment="CENTER">
+               <children>
+                  <Label text="Board length:" />
+                  <Label fx:id="lblLength" text="Label">
+                     <padding>
+                        <Insets left="8.0" />
+                     </padding></Label>
+               </children>
+            </HBox>
+            <HBox alignment="BASELINE_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+               <children>
+                  <Label text="Game difficulty:" />
+                  <Label fx:id="lblDifficulty" text="Label">
+                     <padding>
+                        <Insets left="8.0" />
+                     </padding></Label>
+               </children>
+            </HBox>
+         </children>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </GridPane>
+   </children>
+   <columnConstraints>
+      <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" prefWidth="100.0" />
+      <ColumnConstraints maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" prefWidth="100.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" />
+      <RowConstraints />
+      <RowConstraints minHeight="70.0" prefHeight="70.0" />
+      <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="ALWAYS" />
+
+   </rowConstraints>
+</GridPane>

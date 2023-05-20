@@ -6,4 +6,6 @@ trait RandomWithState {
 
   def nextInt(n: Int): (Int, RandomWithState)
   
+  def getSeed(): Long
+  
 }

@@ -8,6 +8,7 @@ import javafx.scene.{Parent, Scene}
 import javafx.stage.{Screen, Stage}
 import tui.Container
 
+
 class Program extends Application {
 
   override def start(primaryStage: Stage): Unit = {

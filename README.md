@@ -1,6 +1,10 @@
 ## HEX Game
 
-### Board Game developed with functional paradigm
+![Menu](https://i.imgur.com/GOd9i4Z.png)
+
+![Game](https://i.imgur.com/V92F4L2.png)
+
+### Board Game developed with functional paradigm using Scala
 
 Developed by
 - 100502 - Paulo Filipe

@@ -1,9 +1,9 @@
 ## HEX Game
 
-![Menu](https://i.imgur.com/GOd9i4Z.png)
+<p style="text-align: center;">![Menu](https://i.imgur.com/GOd9i4Z.png)</p>
 
-![Game](https://i.imgur.com/V92F4L2.png)
-
+<p style="text-align: center;">![Game](https://i.imgur.com/V92F4L2.png)</p>
+g
 ### Board Game developed with functional paradigm using Scala
 
 Developed by
